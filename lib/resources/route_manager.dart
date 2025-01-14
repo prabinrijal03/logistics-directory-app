@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../presentation/pages/dashboard/admin_dashboard_page.dart';
 import '../presentation/pages/home/home_page.dart';
 
 enum AppRoute {
-  homePage('/home', HomePage());
+  homePage('/home', HomePage()),
+  dashboardPage('/dashboard', AdminDashboardPage());
 
   final String path;
   final Widget page;

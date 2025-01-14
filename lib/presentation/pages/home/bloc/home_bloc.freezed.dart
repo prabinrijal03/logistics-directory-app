@@ -19,32 +19,38 @@ mixin _$HomeEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchCompanies,
+    required TResult Function() fetchBannerAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchCompanies,
+    TResult? Function()? fetchBannerAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchCompanies,
+    TResult Function()? fetchBannerAds,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_FetchCompanies value) fetchCompanies,
+    required TResult Function(_FetchBannerAds value) fetchBannerAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_FetchCompanies value)? fetchCompanies,
+    TResult? Function(_FetchBannerAds value)? fetchBannerAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_FetchCompanies value)? fetchCompanies,
+    TResult Function(_FetchBannerAds value)? fetchBannerAds,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -112,6 +118,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchCompanies,
+    required TResult Function() fetchBannerAds,
   }) {
     return fetchCompanies();
   }
@@ -120,6 +127,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchCompanies,
+    TResult? Function()? fetchBannerAds,
   }) {
     return fetchCompanies?.call();
   }
@@ -128,6 +136,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchCompanies,
+    TResult Function()? fetchBannerAds,
     required TResult orElse(),
   }) {
     if (fetchCompanies != null) {
@@ -140,6 +149,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_FetchCompanies value) fetchCompanies,
+    required TResult Function(_FetchBannerAds value) fetchBannerAds,
   }) {
     return fetchCompanies(this);
   }
@@ -148,6 +158,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_FetchCompanies value)? fetchCompanies,
+    TResult? Function(_FetchBannerAds value)? fetchBannerAds,
   }) {
     return fetchCompanies?.call(this);
   }
@@ -156,6 +167,7 @@ class _$FetchCompaniesImpl implements _FetchCompanies {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_FetchCompanies value)? fetchCompanies,
+    TResult Function(_FetchBannerAds value)? fetchBannerAds,
     required TResult orElse(),
   }) {
     if (fetchCompanies != null) {
@@ -170,12 +182,118 @@ abstract class _FetchCompanies implements HomeEvent {
 }
 
 /// @nodoc
+abstract class _$$FetchBannerAdsImplCopyWith<$Res> {
+  factory _$$FetchBannerAdsImplCopyWith(_$FetchBannerAdsImpl value,
+          $Res Function(_$FetchBannerAdsImpl) then) =
+      __$$FetchBannerAdsImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$FetchBannerAdsImplCopyWithImpl<$Res>
+    extends _$HomeEventCopyWithImpl<$Res, _$FetchBannerAdsImpl>
+    implements _$$FetchBannerAdsImplCopyWith<$Res> {
+  __$$FetchBannerAdsImplCopyWithImpl(
+      _$FetchBannerAdsImpl _value, $Res Function(_$FetchBannerAdsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of HomeEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$FetchBannerAdsImpl implements _FetchBannerAds {
+  const _$FetchBannerAdsImpl();
+
+  @override
+  String toString() {
+    return 'HomeEvent.fetchBannerAds()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$FetchBannerAdsImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() fetchCompanies,
+    required TResult Function() fetchBannerAds,
+  }) {
+    return fetchBannerAds();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? fetchCompanies,
+    TResult? Function()? fetchBannerAds,
+  }) {
+    return fetchBannerAds?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? fetchCompanies,
+    TResult Function()? fetchBannerAds,
+    required TResult orElse(),
+  }) {
+    if (fetchBannerAds != null) {
+      return fetchBannerAds();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_FetchCompanies value) fetchCompanies,
+    required TResult Function(_FetchBannerAds value) fetchBannerAds,
+  }) {
+    return fetchBannerAds(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_FetchCompanies value)? fetchCompanies,
+    TResult? Function(_FetchBannerAds value)? fetchBannerAds,
+  }) {
+    return fetchBannerAds?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_FetchCompanies value)? fetchCompanies,
+    TResult Function(_FetchBannerAds value)? fetchBannerAds,
+    required TResult orElse(),
+  }) {
+    if (fetchBannerAds != null) {
+      return fetchBannerAds(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _FetchBannerAds implements HomeEvent {
+  const factory _FetchBannerAds() = _$FetchBannerAdsImpl;
+}
+
+/// @nodoc
 mixin _$HomeState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -184,6 +302,7 @@ mixin _$HomeState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -192,6 +311,7 @@ mixin _$HomeState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -201,6 +321,7 @@ mixin _$HomeState {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -209,6 +330,7 @@ mixin _$HomeState {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -217,6 +339,7 @@ mixin _$HomeState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -287,6 +410,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -298,6 +422,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -309,6 +434,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -324,6 +450,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -335,6 +462,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -346,6 +474,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -404,6 +533,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -415,6 +545,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -426,6 +557,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -441,6 +573,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -452,6 +585,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -463,6 +597,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -556,6 +691,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
     required TResult Function(String message) error,
   }) {
     return loaded(companies);
@@ -567,6 +703,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(companies);
@@ -578,6 +715,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -593,6 +731,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -604,6 +743,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -615,6 +755,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -634,6 +775,170 @@ abstract class _Loaded implements HomeState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AdsLoadedImplCopyWith<$Res> {
+  factory _$$AdsLoadedImplCopyWith(
+          _$AdsLoadedImpl value, $Res Function(_$AdsLoadedImpl) then) =
+      __$$AdsLoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<Ad> ads});
+}
+
+/// @nodoc
+class __$$AdsLoadedImplCopyWithImpl<$Res>
+    extends _$HomeStateCopyWithImpl<$Res, _$AdsLoadedImpl>
+    implements _$$AdsLoadedImplCopyWith<$Res> {
+  __$$AdsLoadedImplCopyWithImpl(
+      _$AdsLoadedImpl _value, $Res Function(_$AdsLoadedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ads = null,
+  }) {
+    return _then(_$AdsLoadedImpl(
+      null == ads
+          ? _value._ads
+          : ads // ignore: cast_nullable_to_non_nullable
+              as List<Ad>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AdsLoadedImpl implements _AdsLoaded {
+  const _$AdsLoadedImpl(final List<Ad> ads) : _ads = ads;
+
+  final List<Ad> _ads;
+  @override
+  List<Ad> get ads {
+    if (_ads is EqualUnmodifiableListView) return _ads;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ads);
+  }
+
+  @override
+  String toString() {
+    return 'HomeState.adsLoaded(ads: $ads)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdsLoadedImpl &&
+            const DeepCollectionEquality().equals(other._ads, _ads));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_ads));
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdsLoadedImplCopyWith<_$AdsLoadedImpl> get copyWith =>
+      __$$AdsLoadedImplCopyWithImpl<_$AdsLoadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
+    required TResult Function(String message) error,
+  }) {
+    return adsLoaded(ads);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
+    TResult? Function(String message)? error,
+  }) {
+    return adsLoaded?.call(ads);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (adsLoaded != null) {
+      return adsLoaded(ads);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return adsLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return adsLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (adsLoaded != null) {
+      return adsLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _AdsLoaded implements HomeState {
+  const factory _AdsLoaded(final List<Ad> ads) = _$AdsLoadedImpl;
+
+  List<Ad> get ads;
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AdsLoadedImplCopyWith<_$AdsLoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -708,6 +1013,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(List<CompanyModel> companies) loaded,
+    required TResult Function(List<Ad> ads) adsLoaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -719,6 +1025,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<CompanyModel> companies)? loaded,
+    TResult? Function(List<Ad> ads)? adsLoaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -730,6 +1037,7 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(List<CompanyModel> companies)? loaded,
+    TResult Function(List<Ad> ads)? adsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -745,6 +1053,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_AdsLoaded value) adsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -756,6 +1065,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_AdsLoaded value)? adsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -767,6 +1077,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_AdsLoaded value)? adsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

@@ -6,8 +6,7 @@ part 'ad_model.g.dart';
 @freezed
 class Ad with _$Ad {
   const factory Ad({
-    required String id,
-    required String position, 
+    required String title,
     required String imageUrl,
   }) = _Ad;
 

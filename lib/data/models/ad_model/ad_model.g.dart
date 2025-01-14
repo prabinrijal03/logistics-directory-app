@@ -7,13 +7,11 @@ part of 'ad_model.dart';
 // **************************************************************************
 
 _$AdImpl _$$AdImplFromJson(Map<String, dynamic> json) => _$AdImpl(
-      id: json['id'] as String,
-      position: json['position'] as String,
+      title: json['title'] as String,
       imageUrl: json['imageUrl'] as String,
     );
 
 Map<String, dynamic> _$$AdImplToJson(_$AdImpl instance) => <String, dynamic>{
-      'id': instance.id,
-      'position': instance.position,
+      'title': instance.title,
       'imageUrl': instance.imageUrl,
     };
