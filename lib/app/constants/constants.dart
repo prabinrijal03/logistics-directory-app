@@ -1,4 +1,4 @@
 class UrlConstants {
-  static const String baseUrl = 'https://logistics-9b9bb.web.app/companies.json';
-  static const String bannerAdsUrl = 'https://logistics-9b9bb.web.app/banner_ads.json';
+  static const String cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dlxftizkl/image/upload'; 
+  static const String cloudinaryUploadPreset = 'logistics_ads'; 
 }

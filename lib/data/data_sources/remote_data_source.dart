@@ -8,7 +8,7 @@ class RemoteDataSource {
 
   Future<List<dynamic>> fetchCompanies() async {
     try {
-      final response = await dio.get(UrlConstants.baseUrl);
+      final response = await dio.get(UrlConstants.cloudinaryUrl);
       if (response.statusCode == 200) {
         return response.data; 
       } else {
@@ -21,7 +21,7 @@ class RemoteDataSource {
 
   Future<List<dynamic>> fetchBannerAds() async {
     try {
-      final response = await dio.get(UrlConstants.bannerAdsUrl);
+      final response = await dio.get(UrlConstants.cloudinaryUploadPreset);
       if (response.statusCode == 200) {
         return response.data;
       } else {
