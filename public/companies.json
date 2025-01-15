@@ -1,0 +1,13 @@
+[
+    {
+      "name": "Logistics Inc.",
+      "serviceType": "Shipping",
+      "location": "New York"
+    },
+    {
+      "name": "Fast Transport",
+      "serviceType": "Delivery",
+      "location": "Los Angeles"
+    }
+  ]
+  

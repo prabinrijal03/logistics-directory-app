@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:logistics_directory_app/data/data_sources/remote_data_source.dart';
-import 'package:logistics_directory_app/presentation/pages/dashboard/admin_dashboard_page.dart';
 import 'package:logistics_directory_app/presentation/pages/home/bloc/home_bloc.dart';
 import 'package:logistics_directory_app/data/repository/repository.dart';
 
@@ -69,11 +68,9 @@ class HomePage extends StatelessWidget {
               },
             ),
 
-            // Main Content
             Expanded(
               child: Row(
                 children: [
-                  // Companies Grid
                   Expanded(
                     flex: 4,
                     child: BlocBuilder<HomeBloc, HomeState>(
@@ -120,14 +117,12 @@ class HomePage extends StatelessWidget {
                               );
                             },
                           ),
-                          adsLoaded: (_) => const SizedBox(), // Skip for ads
+                          adsLoaded: (_) => const SizedBox(),
                           error: (message) => Center(child: Text(message)),
                         );
                       },
                     ),
                   ),
-
-                  // Sidebar Ads
                   Expanded(
                     flex: 1,
                     child: BlocBuilder<HomeBloc, HomeState>(
@@ -174,7 +169,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Pagination
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -203,7 +197,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
 
-            // Footer
             Container(
               color: Colors.green,
               height: 50,

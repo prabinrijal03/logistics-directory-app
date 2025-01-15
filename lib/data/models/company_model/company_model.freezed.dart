@@ -20,7 +20,6 @@ CompanyModel _$CompanyModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CompanyModel {
-  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get serviceType => throw _privateConstructorUsedError;
   String get location => throw _privateConstructorUsedError;
@@ -41,7 +40,7 @@ abstract class $CompanyModelCopyWith<$Res> {
           CompanyModel value, $Res Function(CompanyModel) then) =
       _$CompanyModelCopyWithImpl<$Res, CompanyModel>;
   @useResult
-  $Res call({String id, String name, String serviceType, String location});
+  $Res call({String name, String serviceType, String location});
 }
 
 /// @nodoc
@@ -59,16 +58,11 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
     Object? serviceType = null,
     Object? location = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -93,7 +87,7 @@ abstract class _$$CompanyModelImplCopyWith<$Res>
       __$$CompanyModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, String serviceType, String location});
+  $Res call({String name, String serviceType, String location});
 }
 
 /// @nodoc
@@ -109,16 +103,11 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
     Object? serviceType = null,
     Object? location = null,
   }) {
     return _then(_$CompanyModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -139,16 +128,11 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CompanyModelImpl implements _CompanyModel {
   const _$CompanyModelImpl(
-      {required this.id,
-      required this.name,
-      required this.serviceType,
-      required this.location});
+      {required this.name, required this.serviceType, required this.location});
 
   factory _$CompanyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CompanyModelImplFromJson(json);
 
-  @override
-  final String id;
   @override
   final String name;
   @override
@@ -158,7 +142,7 @@ class _$CompanyModelImpl implements _CompanyModel {
 
   @override
   String toString() {
-    return 'CompanyModel(id: $id, name: $name, serviceType: $serviceType, location: $location)';
+    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location)';
   }
 
   @override
@@ -166,7 +150,6 @@ class _$CompanyModelImpl implements _CompanyModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CompanyModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.serviceType, serviceType) ||
                 other.serviceType == serviceType) &&
@@ -176,7 +159,7 @@ class _$CompanyModelImpl implements _CompanyModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, serviceType, location);
+  int get hashCode => Object.hash(runtimeType, name, serviceType, location);
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -196,16 +179,13 @@ class _$CompanyModelImpl implements _CompanyModel {
 
 abstract class _CompanyModel implements CompanyModel {
   const factory _CompanyModel(
-      {required final String id,
-      required final String name,
+      {required final String name,
       required final String serviceType,
       required final String location}) = _$CompanyModelImpl;
 
   factory _CompanyModel.fromJson(Map<String, dynamic> json) =
       _$CompanyModelImpl.fromJson;
 
-  @override
-  String get id;
   @override
   String get name;
   @override

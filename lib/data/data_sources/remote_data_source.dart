@@ -7,12 +7,28 @@ class RemoteDataSource {
   RemoteDataSource(this.dio);
 
   Future<List<dynamic>> fetchCompanies() async {
-    final response = await dio.get(UrlConstants.baseUrl);
-    return response.data;
+    try {
+      final response = await dio.get(UrlConstants.baseUrl);
+      if (response.statusCode == 200) {
+        return response.data; 
+      } else {
+        throw Exception("Failed to load companies");
+      }
+    } catch (e) {
+      throw Exception("Error: $e");
+    }
   }
 
   Future<List<dynamic>> fetchBannerAds() async {
-    final response = await dio.get(UrlConstants.bannerAdsUrl);
-    return response.data;
+    try {
+      final response = await dio.get(UrlConstants.bannerAdsUrl);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception("Failed to load banner ads");
+      }
+    } catch (e) {
+      throw Exception("Error: $e");
+    }
   }
 }

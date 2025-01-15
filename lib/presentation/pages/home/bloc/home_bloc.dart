@@ -11,25 +11,31 @@ part 'home_bloc.freezed.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final CompanyRepositoryImpl repository;
-  HomeBloc(this.repository) : super(_Initial()) {
-    on<_FetchCompanies>((event, emit) async {
-      emit(HomeState.loading());
-      try {
-        final companies = await repository.getCompanies();
-        emit(HomeState.loaded(companies));
-      } catch (e) {
-        emit(HomeState.error(e.toString()));
-      }
-    });
 
-    on<_FetchBannerAds>((event, emit) async {
-      emit(const HomeState.loading());
-      try {
-        final ads = await repository.getBannerAds();
-        emit(HomeState.adsLoaded(ads));
-      } catch (e) {
-        emit(HomeState.error(e.toString()));
-      }
-    });
+  HomeBloc(this.repository) : super(const HomeState.initial()) {
+    on<HomeEvent>(_onEvent);
+  }
+
+  Future<void> _onEvent(HomeEvent event, Emitter<HomeState> emit) async {
+    await event.when(
+      fetchCompanies: () async {
+        emit(const HomeState.loading());
+        try {
+          final companies = await repository.getCompanies();
+          emit(HomeState.loaded(companies));
+        } catch (e) {
+          emit(HomeState.error(e.toString()));
+        }
+      },
+      fetchBannerAds: () async {
+        emit(const HomeState.loading());
+        try {
+          final ads = await repository.getBannerAds();
+          emit(HomeState.adsLoaded(ads));
+        } catch (e) {
+          emit(HomeState.error(e.toString()));
+        }
+      },
+    );
   }
 }

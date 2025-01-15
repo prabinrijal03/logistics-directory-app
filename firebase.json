@@ -1,1 +1,71 @@
-{"functions":[{"source":"functions","codebase":"default","ignore":["node_modules",".git","firebase-debug.log","firebase-debug.*.log","*.local"],"predeploy":["npm --prefix \"$RESOURCE_DIR\" run lint"]}],"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"storage":{"rules":"storage.rules"},"emulators":{"apphosting":{"port":57367,"rootDirectory":"./build/web"},"auth":{"port":57367},"functions":{"port":57367},"firestore":{"port":57367},"ui":{"enabled":true,"port":57367},"singleProjectMode":true},"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"logistics-9b9bb","configurations":{"web":"1:1061936047024:web:2ebbbb7b40e50c7bd4ec75"}}}}}}
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "apphosting": {
+      "port": 57367,
+      "rootDirectory": "./build/web"
+    },
+    "auth": {
+      "port": 57367
+    },
+    "functions": {
+      "port": 57367
+    },
+    "firestore": {
+      "port": 57367
+    },
+    "ui": {
+      "enabled": true,
+      "port": 57367
+    },
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "logistics-9b9bb",
+          "configurations": {
+            "web": "1:1061936047024:web:2ebbbb7b40e50c7bd4ec75"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
