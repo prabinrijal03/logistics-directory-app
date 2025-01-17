@@ -9,7 +9,11 @@ class CompanyModel with _$CompanyModel {
     required String name,
     required String serviceType,
     required String location,
+    required String email,
+    required String phone,
+    required String website,
   }) = _CompanyModel;
 
-  factory CompanyModel.fromJson(Map<String, dynamic> json) => _$CompanyModelFromJson(json);
+  factory CompanyModel.fromJson(Map<String, dynamic> json) =>
+      _$CompanyModelFromJson(json);
 }

@@ -11,6 +11,9 @@ _$CompanyModelImpl _$$CompanyModelImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       serviceType: json['serviceType'] as String,
       location: json['location'] as String,
+      email: json['email'] as String,
+      phone: json['phone'] as String,
+      website: json['website'] as String,
     );
 
 Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
@@ -18,4 +21,7 @@ Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
       'name': instance.name,
       'serviceType': instance.serviceType,
       'location': instance.location,
+      'email': instance.email,
+      'phone': instance.phone,
+      'website': instance.website,
     };

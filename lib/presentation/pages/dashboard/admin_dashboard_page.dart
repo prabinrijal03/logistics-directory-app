@@ -56,12 +56,18 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController serviceTypeController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
   String? _editingCompanyId;
 
   void clearControllers() {
     nameController.clear();
     serviceTypeController.clear();
     locationController.clear();
+    emailController.clear();
+    phoneController.clear();
+    websiteController.clear();
     setState(() {
       _editingCompanyId = null;
     });
@@ -70,20 +76,24 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   Future<void> saveCompany() async {
     if (nameController.text.isNotEmpty &&
         serviceTypeController.text.isNotEmpty &&
-        locationController.text.isNotEmpty) {
+        locationController.text.isNotEmpty &&
+        emailController.text.isNotEmpty &&
+        phoneController.text.isNotEmpty &&
+        websiteController.text.isNotEmpty) {
       final companyData = {
         'name': nameController.text,
         'serviceType': serviceTypeController.text,
         'location': locationController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        'website': websiteController.text,
       };
 
       if (_editingCompanyId == null) {
-        // Add new company
         await FirebaseFirestore.instance
             .collection('companies')
             .add(companyData);
       } else {
-        // Update existing company
         await FirebaseFirestore.instance
             .collection('companies')
             .doc(_editingCompanyId)
@@ -104,6 +114,9 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
       nameController.text = company['name'];
       serviceTypeController.text = company['serviceType'];
       locationController.text = company['location'];
+      emailController.text = company['email'];
+      phoneController.text = company['phone'];
+      websiteController.text = company['website'];
     });
   }
 
@@ -156,6 +169,36 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
                 ),
               ),
               const SizedBox(height: 8),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: websiteController,
+                decoration: const InputDecoration(
+                  labelText: 'Website',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -197,7 +240,11 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
                       ListTile(
                         title: Text(company['name']),
                         subtitle: Text(
-                          'Service Type: ${company['serviceType']}, Location: ${company['location']}',
+                          'Service Type: ${company['serviceType']}, '
+                          'Location: ${company['location']}, '
+                          'Email: ${company['email']}, '
+                          'Phone: ${company['phone']}, '
+                          'Website: ${company['website']}',
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

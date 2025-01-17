@@ -23,6 +23,9 @@ mixin _$CompanyModel {
   String get name => throw _privateConstructorUsedError;
   String get serviceType => throw _privateConstructorUsedError;
   String get location => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get website => throw _privateConstructorUsedError;
 
   /// Serializes this CompanyModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +43,13 @@ abstract class $CompanyModelCopyWith<$Res> {
           CompanyModel value, $Res Function(CompanyModel) then) =
       _$CompanyModelCopyWithImpl<$Res, CompanyModel>;
   @useResult
-  $Res call({String name, String serviceType, String location});
+  $Res call(
+      {String name,
+      String serviceType,
+      String location,
+      String email,
+      String phone,
+      String website});
 }
 
 /// @nodoc
@@ -61,6 +70,9 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
     Object? name = null,
     Object? serviceType = null,
     Object? location = null,
+    Object? email = null,
+    Object? phone = null,
+    Object? website = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -75,6 +87,18 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      website: null == website
+          ? _value.website
+          : website // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -87,7 +111,13 @@ abstract class _$$CompanyModelImplCopyWith<$Res>
       __$$CompanyModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String serviceType, String location});
+  $Res call(
+      {String name,
+      String serviceType,
+      String location,
+      String email,
+      String phone,
+      String website});
 }
 
 /// @nodoc
@@ -106,6 +136,9 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? serviceType = null,
     Object? location = null,
+    Object? email = null,
+    Object? phone = null,
+    Object? website = null,
   }) {
     return _then(_$CompanyModelImpl(
       name: null == name
@@ -120,6 +153,18 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      website: null == website
+          ? _value.website
+          : website // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -128,7 +173,12 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CompanyModelImpl implements _CompanyModel {
   const _$CompanyModelImpl(
-      {required this.name, required this.serviceType, required this.location});
+      {required this.name,
+      required this.serviceType,
+      required this.location,
+      required this.email,
+      required this.phone,
+      required this.website});
 
   factory _$CompanyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CompanyModelImplFromJson(json);
@@ -139,10 +189,16 @@ class _$CompanyModelImpl implements _CompanyModel {
   final String serviceType;
   @override
   final String location;
+  @override
+  final String email;
+  @override
+  final String phone;
+  @override
+  final String website;
 
   @override
   String toString() {
-    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location)';
+    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location, email: $email, phone: $phone, website: $website)';
   }
 
   @override
@@ -154,12 +210,16 @@ class _$CompanyModelImpl implements _CompanyModel {
             (identical(other.serviceType, serviceType) ||
                 other.serviceType == serviceType) &&
             (identical(other.location, location) ||
-                other.location == location));
+                other.location == location) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.website, website) || other.website == website));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, serviceType, location);
+  int get hashCode => Object.hash(
+      runtimeType, name, serviceType, location, email, phone, website);
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -181,7 +241,10 @@ abstract class _CompanyModel implements CompanyModel {
   const factory _CompanyModel(
       {required final String name,
       required final String serviceType,
-      required final String location}) = _$CompanyModelImpl;
+      required final String location,
+      required final String email,
+      required final String phone,
+      required final String website}) = _$CompanyModelImpl;
 
   factory _CompanyModel.fromJson(Map<String, dynamic> json) =
       _$CompanyModelImpl.fromJson;
@@ -192,6 +255,12 @@ abstract class _CompanyModel implements CompanyModel {
   String get serviceType;
   @override
   String get location;
+  @override
+  String get email;
+  @override
+  String get phone;
+  @override
+  String get website;
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.
