@@ -45,65 +45,130 @@ class AdminDashboardPage extends StatelessWidget {
   }
 }
 
-class CompaniesAdminTab extends StatelessWidget {
+class CompaniesAdminTab extends StatefulWidget {
   const CompaniesAdminTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController serviceTypeController = TextEditingController();
-    final TextEditingController locationController = TextEditingController();
+  State<CompaniesAdminTab> createState() => _CompaniesAdminTabState();
+}
 
-    void clearControllers() {
-      nameController.clear();
-      serviceTypeController.clear();
-      locationController.clear();
-    }
+class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController serviceTypeController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  String? _editingCompanyId;
 
-    Future<void> addCompany() async {
-      if (nameController.text.isNotEmpty &&
-          serviceTypeController.text.isNotEmpty &&
-          locationController.text.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('companies').add({
-          'name': nameController.text,
-          'serviceType': serviceTypeController.text,
-          'location': locationController.text,
-        });
-        clearControllers();
+  void clearControllers() {
+    nameController.clear();
+    serviceTypeController.clear();
+    locationController.clear();
+    setState(() {
+      _editingCompanyId = null;
+    });
+  }
+
+  Future<void> saveCompany() async {
+    if (nameController.text.isNotEmpty &&
+        serviceTypeController.text.isNotEmpty &&
+        locationController.text.isNotEmpty) {
+      final companyData = {
+        'name': nameController.text,
+        'serviceType': serviceTypeController.text,
+        'location': locationController.text,
+      };
+
+      if (_editingCompanyId == null) {
+        // Add new company
+        await FirebaseFirestore.instance
+            .collection('companies')
+            .add(companyData);
+      } else {
+        // Update existing company
+        await FirebaseFirestore.instance
+            .collection('companies')
+            .doc(_editingCompanyId)
+            .update(companyData);
       }
-    }
 
-    Future<void> deleteCompany(String id) async {
-      await FirebaseFirestore.instance.collection('companies').doc(id).delete();
+      clearControllers();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
     }
+  }
 
+  void startEditingCompany(QueryDocumentSnapshot company) {
+    setState(() {
+      _editingCompanyId = company.id;
+      nameController.text = company['name'];
+      serviceTypeController.text = company['serviceType'];
+      locationController.text = company['location'];
+    });
+  }
+
+  Future<void> deleteCompany(String id) async {
+    await FirebaseFirestore.instance.collection('companies').doc(id).delete();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left: 80.0, right: 80, top: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Add New Company',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                _editingCompanyId == null ? 'Add New Company' : 'Edit Company',
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 10),
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Company Name'),
-              ),
-              TextField(
-                controller: serviceTypeController,
-                decoration: const InputDecoration(labelText: 'Service Type'),
-              ),
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(labelText: 'Location'),
+                decoration: const InputDecoration(
+                  labelText: 'Company Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: addCompany,
-                child: const Text('Add Company'),
+              TextField(
+                controller: serviceTypeController,
+                decoration: const InputDecoration(
+                  labelText: 'Service Type',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Location',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: saveCompany,
+                  child: Text(
+                    _editingCompanyId == null
+                        ? 'Add Company'
+                        : 'Update Company',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ],
           ),
@@ -127,14 +192,29 @@ class CompaniesAdminTab extends StatelessWidget {
                 itemCount: companies.length,
                 itemBuilder: (context, index) {
                   final company = companies[index];
-                  return ListTile(
-                    title: Text(company['name']),
-                    subtitle: Text(
-                        'Service Type: ${company['serviceType']}, Location: ${company['location']}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => deleteCompany(company.id),
-                    ),
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(company['name']),
+                        subtitle: Text(
+                          'Service Type: ${company['serviceType']}, Location: ${company['location']}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => startEditingCompany(company),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => deleteCompany(company.id),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(),
+                    ],
                   );
                 },
               );
@@ -227,17 +307,14 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
         }
 
         if (_editingAdId == null) {
-          // Add new ad
           await FirebaseFirestore.instance.collection('ads').add(adData);
         } else {
-          // Update existing ad
           await FirebaseFirestore.instance
               .collection('ads')
               .doc(_editingAdId)
               .update(adData);
         }
 
-        // Clear state
         titleController.clear();
         setState(() {
           _selectedImage = null;
@@ -268,7 +345,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
       _editingAdId = ad.id;
       titleController.text = ad['title'];
       _selectedAdType = ad['type'];
-      _selectedImage = null; // Clear the selected image for new uploads
+      _selectedImage = null;
     });
   }
 
@@ -301,7 +378,12 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
               ),
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(labelText: 'Ad Title'),
+                decoration: const InputDecoration(
+                  labelText: 'Ad Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
               _selectedImage != null
@@ -312,10 +394,18 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
                     ),
               const SizedBox(height: 8),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
                 onPressed: _isUploading ? null : saveAd,
                 child: _isUploading
                     ? const CircularProgressIndicator()
-                    : Text(_editingAdId == null ? 'Save Ad' : 'Update Ad'),
+                    : Text(
+                        _editingAdId == null ? 'Save Ad' : 'Update Ad',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ],
           ),

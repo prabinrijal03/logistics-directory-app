@@ -1,212 +1,246 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logistics_directory_app/app/extensions/build_context_entensions.dart';
 import 'package:logistics_directory_app/resources/route_manager.dart';
 
-class HomePage extends StatefulWidget {
+import 'bloc/home_bloc.dart';
+
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  HomePageState createState() => HomePageState();
-}
-
-class HomePageState extends State<HomePage> {
-  int currentPage = 1;
-  int itemsPerPage = 10;
-
-  @override
   Widget build(BuildContext context) {
-    final isMobile = context.isMobile;
-    final isDesktop = context.isDesktop;
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.green,
-        title: Padding(
-          padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 50),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search for logistics companies...',
-              filled: true,
-              fillColor: context.surfaceColor,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide.none,
+    return BlocProvider(
+      create: (_) => HomeBloc()..add(const HomeEvent.started()),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.green,
+          title: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.isMobile
+                  ? 10
+                  : context.isDesktop
+                      ? 250
+                      : 20,
+            ),
+            child: TextField(
+              onChanged: (query) =>
+                  context.read<HomeBloc>().add(HomeEvent.searchChanged(query)),
+              decoration: InputDecoration(
+                hintText: 'Search for logistics companies...',
+                filled: true,
+                fillColor: context.surfaceColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: Icon(Icons.search, color: context.disabledColor),
               ),
-              prefixIcon: Icon(Icons.search, color: context.disabledColor),
             ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        body: Stack(
           children: [
-            _buildTopBannerAd(context),
-            Expanded(
-              child: Row(
+            if (context.isMobile || context.isSmallTablet)
+              _buildMobileLayout(context)
+            else
+              Stack(
                 children: [
-                  Expanded(
-                    flex: isDesktop ? 3 : 1,
-                    child: _buildCompaniesList(context),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 1.115,
+                    child: _buildDesktopLayout(context),
                   ),
-                  if (!isMobile)
-                    Expanded(
-                      flex: 1,
-                      child: _buildSidebarAds(context),
+                  Positioned(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height / 9),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () => context
+                                  .read<HomeBloc>()
+                                  .add(const HomeEvent.loadPreviousPage()),
+                              child: const Text('< Prev'),
+                            ),
+                            TextButton(
+                              onPressed: () => context
+                                  .read<HomeBloc>()
+                                  .add(const HomeEvent.loadNextPage()),
+                              child: const Text('Next >'),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, AppRoute.dashboardPage.path);
+                                },
+                                child: Text("Dashboard"))
+                          ],
+                        ),
+                      ),
                     ),
+                  )
                 ],
               ),
-            ),
-            _buildFooter(context),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildMobileLayout(BuildContext context) {
+    return Column(
+      children: [
+        _buildTopBannerAd(context),
+        Expanded(
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              return _buildCompanyList(context, state);
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () => context
+                  .read<HomeBloc>()
+                  .add(const HomeEvent.loadPreviousPage()),
+              child: const Text('< Prev'),
+            ),
+            TextButton(
+              onPressed: () =>
+                  context.read<HomeBloc>().add(const HomeEvent.loadNextPage()),
+              child: const Text('Next >'),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoute.dashboardPage.path);
+                },
+                child: Text("Dashboard"))
+          ],
+        ),
+        _buildSidebarAds(context),
+        _buildFooter(context),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildTopBannerAd(context),
+                    Expanded(
+                      child: BlocBuilder<HomeBloc, HomeState>(
+                        builder: (context, state) {
+                          return _buildCompanyList(context, state);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _buildSidebarAds(context),
+            ],
+          ),
+        ),
+        _buildFooter(context),
+      ],
+    );
+  }
+
   Widget _buildTopBannerAd(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('ads')
-          .where('type', isEqualTo: 'Top Banner Ad')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state.ads.isEmpty) {
           return Container(
-            color: Colors.red.withOpacity(0.2),
+            color: Colors.grey.withOpacity(0.2),
             height: 50,
             alignment: Alignment.center,
             child: const Text('Top Banner Ad'),
           );
         }
-        final ad = snapshot.data!.docs.first;
-        return Image.network(
-          ad['imageUrl'],
-          fit: BoxFit.cover,
-          height: 50,
-          width: double.infinity,
-        );
-      },
-    );
-  }
 
-  Widget _buildCompaniesList(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('companies')
-          .orderBy('name')
-          .startAfter([currentPage * itemsPerPage])
-          .limit(itemsPerPage)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No companies found"));
-        }
-        final companies = snapshot.data!.docs;
-
-        return GridView.builder(
-          padding: const EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: context.isMobile ? 2 : 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 6 / 1,
+        final ad = state.ads.first;
+        return Padding(
+          padding: const EdgeInsets.only(left: 80.0, right: 80.0),
+          child: Image.network(
+            ad.imageUrl,
+            fit: BoxFit.fill,
+            height: 70,
+            width: double.infinity,
           ),
-          itemCount: companies.length,
-          itemBuilder: (context, index) {
-            final company = companies[index];
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      company['name'],
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Service: ${company['serviceType']}',
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Location: ${company['location']}',
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
         );
       },
     );
   }
 
   Widget _buildSidebarAds(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('ads')
-          .where('type', whereIn: ['Sidebar Ad 1', 'Sidebar Ad 2']).snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state.ads.isEmpty) {
+          return Container();
         }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Column(
-            children: [
-              Container(
-                color: Colors.red.withOpacity(0.2),
-                height: 150,
-                alignment: Alignment.center,
-                child: const Text('Sidebar Ad 1'),
+
+        final ad1 = state.ads.length > 1 ? state.ads[1] : null;
+        final ad2 = state.ads.length > 2 ? state.ads[2] : null;
+
+        if (ad1 == null && ad2 == null) {
+          return Container();
+        }
+
+        if (context.isMobile) {
+          return SizedBox(
+            height: 60,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                if (ad1 != null)
+                  Container(
+                    width: context.width / 2.5,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Image.network(ad1.imageUrl, fit: BoxFit.cover),
+                  ),
+                if (ad2 != null)
+                  Container(
+                    width: context.width / 2.5,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Image.network(ad2.imageUrl, fit: BoxFit.fill),
+                  ),
+              ],
+            ),
+          );
+        } else {
+          return SingleChildScrollView(
+            child: SizedBox(
+              width: context.width / 6.5,
+              child: Column(
+                children: [
+                  if (ad1 != null)
+                    Container(
+                      height: 220,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: Image.network(ad1.imageUrl, fit: BoxFit.fill),
+                    ),
+                  if (ad2 != null)
+                    SizedBox(
+                      height: 220,
+                      child: Image.network(ad2.imageUrl, fit: BoxFit.fill),
+                    ),
+                ],
               ),
-              const Spacer(),
-              Container(
-                color: Colors.red.withOpacity(0.2),
-                height: 150,
-                alignment: Alignment.center,
-                child: const Text('Sidebar Ad 2'),
-              ),
-            ],
+            ),
           );
         }
-        final ads = snapshot.data!.docs;
-        return Column(
-          children: ads.map((ad) {
-            return Container(
-              height: 150,
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Image.network(
-                ad['imageUrl'],
-                fit: BoxFit.cover,
-              ),
-            );
-          }).toList(),
-        );
       },
     );
   }
@@ -214,65 +248,79 @@ class HomePageState extends State<HomePage> {
   Widget _buildFooter(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: () {
-                if (currentPage > 1) {
-                  setState(() {
-                    currentPage--;
-                  });
-                }
-              },
-              child: const Text('1', style: TextStyle(color: Colors.black)),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  currentPage = 2;
-                });
-              },
-              child: const Text('2', style: TextStyle(color: Colors.black)),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  currentPage = 3;
-                });
-              },
-              child: const Text('3', style: TextStyle(color: Colors.black)),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  currentPage++;
-                });
-              },
-              child:
-                  const Text('Next >', style: TextStyle(color: Colors.black)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoute.dashboardPage.path,
-                );
-              },
-              child: Text('Dashboard'),
-            ),
-          ],
-        ),
         Container(
           color: Colors.green,
           height: 50,
+          width: MediaQuery.of(context).size.width,
           alignment: Alignment.center,
           child: const Text(
-            'Footer - Contact Info | Terms | Privacy Policy',
+            'Contact Info | Terms | Privacy Policy',
             style: TextStyle(color: Colors.white),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCompanyList(BuildContext context, HomeState state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(state.errorMessage!),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () =>
+                  context.read<HomeBloc>().add(const HomeEvent.started()),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state.companies.isEmpty) {
+      return const Center(child: Text('No companies available.'));
+    }
+
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.isMobile ? 20 : 80,
+        vertical: 6,
+      ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: context.isMobile ? 2 : (context.isTablet ? 2 : 3),
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: context.isMobile ? 5 / 2.5 : 5 / 1.6,
+      ),
+      itemCount: state.companies.length,
+      itemBuilder: (context, index) {
+        final company = state.companies[index];
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  company.name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 4),
+                Text('Service Type: ${company.serviceType}'),
+                Text('Location: ${company.location}'),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
