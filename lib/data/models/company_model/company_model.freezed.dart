@@ -26,6 +26,8 @@ mixin _$CompanyModel {
   String get email => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
   String get website => throw _privateConstructorUsedError;
+  double get rating => throw _privateConstructorUsedError;
+  bool? get isFeatured => throw _privateConstructorUsedError;
 
   /// Serializes this CompanyModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,7 +51,9 @@ abstract class $CompanyModelCopyWith<$Res> {
       String location,
       String email,
       String phone,
-      String website});
+      String website,
+      double rating,
+      bool? isFeatured});
 }
 
 /// @nodoc
@@ -73,6 +77,8 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
     Object? email = null,
     Object? phone = null,
     Object? website = null,
+    Object? rating = null,
+    Object? isFeatured = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -99,6 +105,14 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
               as String,
+      rating: null == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
+              as double,
+      isFeatured: freezed == isFeatured
+          ? _value.isFeatured
+          : isFeatured // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -117,7 +131,9 @@ abstract class _$$CompanyModelImplCopyWith<$Res>
       String location,
       String email,
       String phone,
-      String website});
+      String website,
+      double rating,
+      bool? isFeatured});
 }
 
 /// @nodoc
@@ -139,6 +155,8 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
     Object? email = null,
     Object? phone = null,
     Object? website = null,
+    Object? rating = null,
+    Object? isFeatured = freezed,
   }) {
     return _then(_$CompanyModelImpl(
       name: null == name
@@ -165,6 +183,14 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
               as String,
+      rating: null == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
+              as double,
+      isFeatured: freezed == isFeatured
+          ? _value.isFeatured
+          : isFeatured // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -178,7 +204,9 @@ class _$CompanyModelImpl implements _CompanyModel {
       required this.location,
       required this.email,
       required this.phone,
-      required this.website});
+      required this.website,
+      required this.rating,
+      this.isFeatured});
 
   factory _$CompanyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CompanyModelImplFromJson(json);
@@ -195,10 +223,14 @@ class _$CompanyModelImpl implements _CompanyModel {
   final String phone;
   @override
   final String website;
+  @override
+  final double rating;
+  @override
+  final bool? isFeatured;
 
   @override
   String toString() {
-    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location, email: $email, phone: $phone, website: $website)';
+    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location, email: $email, phone: $phone, website: $website, rating: $rating, isFeatured: $isFeatured)';
   }
 
   @override
@@ -213,13 +245,16 @@ class _$CompanyModelImpl implements _CompanyModel {
                 other.location == location) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.website, website) || other.website == website));
+            (identical(other.website, website) || other.website == website) &&
+            (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.isFeatured, isFeatured) ||
+                other.isFeatured == isFeatured));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, serviceType, location, email, phone, website);
+  int get hashCode => Object.hash(runtimeType, name, serviceType, location,
+      email, phone, website, rating, isFeatured);
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -244,7 +279,9 @@ abstract class _CompanyModel implements CompanyModel {
       required final String location,
       required final String email,
       required final String phone,
-      required final String website}) = _$CompanyModelImpl;
+      required final String website,
+      required final double rating,
+      final bool? isFeatured}) = _$CompanyModelImpl;
 
   factory _CompanyModel.fromJson(Map<String, dynamic> json) =
       _$CompanyModelImpl.fromJson;
@@ -261,6 +298,10 @@ abstract class _CompanyModel implements CompanyModel {
   String get phone;
   @override
   String get website;
+  @override
+  double get rating;
+  @override
+  bool? get isFeatured;
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.

@@ -60,6 +60,8 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController websiteController = TextEditingController();
   String? _editingCompanyId;
+  double _rating = 0.0;
+  bool isFeatured = false;
 
   void clearControllers() {
     nameController.clear();
@@ -70,30 +72,32 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     websiteController.clear();
     setState(() {
       _editingCompanyId = null;
+      _rating = 0.0;
     });
   }
 
   Future<void> saveCompany() async {
     if (nameController.text.isNotEmpty &&
         serviceTypeController.text.isNotEmpty &&
-        locationController.text.isNotEmpty &&
-        emailController.text.isNotEmpty &&
-        phoneController.text.isNotEmpty &&
-        websiteController.text.isNotEmpty) {
+        locationController.text.isNotEmpty) {
       final companyData = {
         'name': nameController.text,
         'serviceType': serviceTypeController.text,
         'location': locationController.text,
         'email': emailController.text,
         'phone': phoneController.text,
+        'rating': _rating,
         'website': websiteController.text,
+        'isFeatured': isFeatured,
       };
 
       if (_editingCompanyId == null) {
+        // Add new company
         await FirebaseFirestore.instance
             .collection('companies')
             .add(companyData);
       } else {
+        // Update existing company
         await FirebaseFirestore.instance
             .collection('companies')
             .doc(_editingCompanyId)
@@ -114,9 +118,10 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
       nameController.text = company['name'];
       serviceTypeController.text = company['serviceType'];
       locationController.text = company['location'];
-      emailController.text = company['email'];
       phoneController.text = company['phone'];
+      emailController.text = company['email'];
       websiteController.text = company['website'];
+      _rating = company['rating']?.toDouble() ?? 0.0;
     });
   }
 
@@ -128,99 +133,137 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 80.0, right: 80, top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _editingCompanyId == null ? 'Add New Company' : 'Edit Company',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Company Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+        Expanded(
+          flex: 12,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _editingCompanyId == null
+                      ? 'Add New Company'
+                      : 'Edit Company',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Company Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: serviceTypeController,
-                decoration: const InputDecoration(
-                  labelText: 'Service Type',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: serviceTypeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Service Type',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: locationController,
+                  decoration: const InputDecoration(
+                    labelText: 'Location',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: websiteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Website',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: websiteController,
-                decoration: const InputDecoration(
-                  labelText: 'Website',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: saveCompany,
-                  child: Text(
-                    _editingCompanyId == null
-                        ? 'Add Company'
-                        : 'Update Company',
-                    style: const TextStyle(color: Colors.white),
+                const SizedBox(height: 8),
+                const Text('Rating:',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      icon: Icon(
+                        index < _rating ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _rating = index + 1.0;
+                        });
+                      },
+                    );
+                  }),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  title: const Text('Mark as Featured'),
+                  value: isFeatured,
+                  onChanged: (value) {
+                    setState(() {
+                      isFeatured = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: saveCompany,
+                    child: Text(
+                      _editingCompanyId == null
+                          ? 'Add Company'
+                          : 'Update Company',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const Divider(),
         Expanded(
+          flex: 4,
           child: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('companies').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('companies')
+                .orderBy('isFeatured', descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -235,33 +278,33 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
                 itemCount: companies.length,
                 itemBuilder: (context, index) {
                   final company = companies[index];
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(company['name']),
-                        subtitle: Text(
-                          'Service Type: ${company['serviceType']}, '
-                          'Location: ${company['location']}, '
-                          'Email: ${company['email']}, '
-                          'Phone: ${company['phone']}, '
-                          'Website: ${company['website']}',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => startEditingCompany(company),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => deleteCompany(company.id),
-                            ),
-                          ],
-                        ),
+                  final isFeatured = company['isFeatured'] ?? false;
+
+                  return Card(
+                    color: isFeatured
+                        ? Colors.yellow[100]
+                        : null, 
+                    child: ListTile(
+                      title: Text(company['name']),
+                      subtitle: Text(
+                        'Service Type: ${company['serviceType']}\n'
+                        'Location: ${company['location']}\n'
+                        'Rating: ${company['rating']}',
                       ),
-                      const Divider(),
-                    ],
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () => startEditingCompany(company),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => deleteCompany(company.id),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               );
@@ -272,6 +315,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     );
   }
 }
+
 
 class BannerAdsAdminTab extends StatefulWidget {
   const BannerAdsAdminTab({super.key});

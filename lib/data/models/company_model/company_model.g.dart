@@ -14,6 +14,8 @@ _$CompanyModelImpl _$$CompanyModelImplFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       phone: json['phone'] as String,
       website: json['website'] as String,
+      rating: (json['rating'] as num).toDouble(),
+      isFeatured: json['isFeatured'] as bool?,
     );
 
 Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
@@ -24,4 +26,6 @@ Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
       'email': instance.email,
       'phone': instance.phone,
       'website': instance.website,
+      'rating': instance.rating,
+      'isFeatured': instance.isFeatured,
     };

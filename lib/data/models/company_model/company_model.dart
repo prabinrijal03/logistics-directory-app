@@ -12,6 +12,8 @@ class CompanyModel with _$CompanyModel {
     required String email,
     required String phone,
     required String website,
+    required double rating,
+    bool? isFeatured,
   }) = _CompanyModel;
 
   factory CompanyModel.fromJson(Map<String, dynamic> json) =>
