@@ -4,12 +4,11 @@ import 'package:logistics_directory_app/firebase_options.dart';
 
 import 'app/root_app.dart';
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   runApp(const MainApp());
 }
 

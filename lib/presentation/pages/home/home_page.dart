@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logistics_directory_app/app/extensions/build_context_entensions.dart';
 import 'package:logistics_directory_app/resources/route_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/models/ad_model/ad_model.dart';
 import '../../../../data/models/company_model/company_model.dart';
 
@@ -41,79 +44,69 @@ class HomePageState extends State<HomePage> {
     });
 
     try {
-      // Fetch total count of companies (used for pagination controls)
-
       final totalSnapshot =
           await FirebaseFirestore.instance.collection('companies').get();
+
       setState(() {
         totalCompaniesCount = totalSnapshot.size;
       });
 
-      // Reset pagination and clear data if a new search query is provided
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        paginationStack.clear(); // Reset pagination stack for new search
-        companies.clear(); // Clear existing companies
-        ads.clear(); // Clear existing ads
+        paginationStack.clear();
+        companies.clear();
+        ads.clear();
       }
 
       Query query = FirebaseFirestore.instance
           .collection('companies')
           .orderBy('isFeatured', descending: true)
-          .limit(5); // Limiting the number of documents per page (5 items)
+          .limit(8);
 
       // Apply search query if provided
       if (searchQuery != null && searchQuery.isNotEmpty) {
         String lowerCaseQuery = searchQuery.toLowerCase();
         query = query
-            .where('name', isGreaterThanOrEqualTo: lowerCaseQuery)
+            // .where('name', isEqualTo: lowerCaseQuery)
             .where('name', isLessThanOrEqualTo: '$lowerCaseQuery\uf8ff');
       }
 
-      // Handle pagination for specific page numbers
       if (page != null) {
         if (page > paginationStack.length) {
-          // Moving to the next page
           if (paginationStack.isNotEmpty) {
             query = query.startAfterDocument(paginationStack.last);
           }
         } else if (page <= paginationStack.length && page > 0) {
-          // Fetch previous page
           if (page > 1) {
             query = query.startAfterDocument(paginationStack[page - 2]);
           }
         }
       }
 
-      // Fetch companies for the current page
       final companiesSnapshot = await query.get();
       final fetchedCompanies = companiesSnapshot.docs
           .map((doc) =>
               CompanyModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
 
-      // Update the pagination stack to ensure proper navigation
       if (companiesSnapshot.docs.isNotEmpty) {
         if (page == null || page > paginationStack.length) {
-          paginationStack.add(companiesSnapshot.docs.last); // Add to stack
+          paginationStack.add(companiesSnapshot.docs.last);
         } else if (page < paginationStack.length) {
           paginationStack = paginationStack.sublist(0, page);
         }
       }
 
-      // Fetch ads (for display alongside companies)
       final adsSnapshot =
           await FirebaseFirestore.instance.collection('ads').get();
       final fetchedAds =
           adsSnapshot.docs.map((doc) => Ad.fromJson(doc.data())).toList();
 
       setState(() {
-        companies =
-            fetchedCompanies; // Replace the companies list with the fetched data
-        ads = fetchedAds; // Update ads
-        isLoading = false; // Set loading to false
+        companies = fetchedCompanies;
+        ads = fetchedAds;
+        isLoading = false;
       });
 
-      // Disable "Load More" button if fewer than 5 companies are fetched
       if (fetchedCompanies.length < 5) {
         setState(() {
           canLoadMore = false;
@@ -125,7 +118,7 @@ class HomePageState extends State<HomePage> {
       }
     } catch (e) {
       setState(() {
-        errorMessage = e.toString(); // Display the error message
+        errorMessage = e.toString();
         isLoading = false;
       });
     }
@@ -239,7 +232,7 @@ class HomePageState extends State<HomePage> {
 
     final ad = ads.first;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Image.network(ad.imageUrl,
           fit: BoxFit.fill, height: 70, width: double.infinity),
     );
@@ -274,18 +267,18 @@ class HomePageState extends State<HomePage> {
           )
         : SingleChildScrollView(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width / 6.5,
+              width: MediaQuery.of(context).size.width / 10,
               child: Column(
                 children: [
                   if (ad1 != null)
                     Container(
-                      height: 220,
+                      height: 200,
                       margin: const EdgeInsets.only(bottom: 10),
                       child: Image.network(ad1.imageUrl, fit: BoxFit.fill),
                     ),
                   if (ad2 != null)
                     SizedBox(
-                      height: 220,
+                      height: 200,
                       child: Image.network(ad2.imageUrl, fit: BoxFit.fill),
                     ),
                 ],
@@ -339,15 +332,15 @@ class HomePageState extends State<HomePage> {
 
         return GridView.builder(
           padding: EdgeInsets.symmetric(
-            horizontal: isWideScreen ? 80 : (isMediumScreen ? 40 : 20),
+            horizontal: isWideScreen ? 80 : (isMediumScreen ? 40 : 10),
             vertical: 10,
           ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: isWideScreen ? 4 : (isMediumScreen ? 3 : 2),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
             childAspectRatio:
-                isWideScreen ? 3 / 2 : (isMediumScreen ? 3.2 / 1.8 : 3 / 2.2),
+                isWideScreen ? 3 / 2 : (isMediumScreen ? 3 / 1.5 : 3 / 2.5),
           ),
           itemCount: companies.length,
           itemBuilder: (context, index) {
@@ -357,20 +350,21 @@ class HomePageState extends State<HomePage> {
             return Card(
               color: isFeatured ? Colors.yellow[100] : null,
               child: Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 6),
+                padding: const EdgeInsets.only(left: 10.0, top: 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       company.name,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18),
+                          fontWeight: FontWeight.bold, fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       'Service Type: ${company.serviceType}',
                       style: TextStyle(
                         color: Colors.black54,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -378,6 +372,7 @@ class HomePageState extends State<HomePage> {
                       'Location: ${company.location}',
                       style: TextStyle(
                         color: Colors.black54,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -385,6 +380,7 @@ class HomePageState extends State<HomePage> {
                       'Email: ${company.email}',
                       style: TextStyle(
                         color: Colors.black54,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -392,22 +388,39 @@ class HomePageState extends State<HomePage> {
                       'Phone: ${company.phone}',
                       style: TextStyle(
                         color: Colors.black54,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text.rich(TextSpan(
-                        text: 'Website: ',
+                    Text.rich(
+                      TextSpan(
+                        text: company.website,
                         style: TextStyle(
-                          color: Colors.black54,
+                          color: Colors.blue,
+                          fontSize: 12,
                         ),
-                        children: [
-                          TextSpan(
-                            text: company.website,
-                            style: TextStyle(
-                              color: Colors.blue,
-                            ),
-                          )
-                        ])),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            String urlString = company.website.trim();
+                            if (!urlString.startsWith('http://') &&
+                                !urlString.startsWith('https://')) {
+                              urlString = 'https://$urlString';
+                            }
+
+                            final Uri url = Uri.parse(urlString);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url,
+                                  mode: LaunchMode.externalApplication);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Could not launch the website')),
+                              );
+                            }
+                          },
+                      ),
+                    ),
                     Row(
                       children: List.generate(
                         5,
@@ -431,6 +444,8 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildPaginationControls(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+
     int totalPages = (totalCompaniesCount / 5).ceil(); // Total pages
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -464,7 +479,11 @@ class HomePageState extends State<HomePage> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, AppRoute.dashboardPage.path);
+              Navigator.pushNamed(
+                  context,
+                  user == null
+                      ? AppRoute.login.path
+                      : AppRoute.dashboardPage.path);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,

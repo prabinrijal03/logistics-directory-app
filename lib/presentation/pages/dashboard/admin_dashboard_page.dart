@@ -26,7 +26,9 @@ class AdminDashboardPage extends StatelessWidget {
           children: [
             const TabBar(
               tabs: [
-                Tab(text: 'Companies'),
+                Tab(
+                  text: 'Companies',
+                ),
                 Tab(text: 'Banner Ads'),
               ],
             ),
@@ -92,12 +94,10 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
       };
 
       if (_editingCompanyId == null) {
-        // Add new company
         await FirebaseFirestore.instance
             .collection('companies')
             .add(companyData);
       } else {
-        // Update existing company
         await FirebaseFirestore.instance
             .collection('companies')
             .doc(_editingCompanyId)
@@ -131,191 +131,190 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 12,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _editingCompanyId == null
-                      ? 'Add New Company'
-                      : 'Edit Company',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isWideScreen = constraints.maxWidth >= 800;
+
+        return isWideScreen
+            ? Row(
+                children: [
+                  _buildFormSection(),
+                  _buildCompanyListSection(),
+                ],
+              )
+            : Column(
+                children: [
+                  _buildFormSection(),
+                  Expanded(child: _buildCompanyListSection()),
+                ],
+              );
+      },
+    );
+  }
+
+  Widget _buildFormSection() {
+    return Expanded(
+      flex: 3,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _editingCompanyId == null ? 'Add New Company' : 'Edit Company',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Company Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              const SizedBox(height: 10),
+              _buildTextField(
+                  controller: nameController, label: 'Company Name'),
+              const SizedBox(height: 8),
+              _buildTextField(
+                  controller: serviceTypeController, label: 'Service Type'),
+              const SizedBox(height: 8),
+              _buildTextField(
+                  controller: locationController, label: 'Location'),
+              const SizedBox(height: 8),
+              _buildTextField(controller: emailController, label: 'Email'),
+              const SizedBox(height: 8),
+              _buildTextField(controller: websiteController, label: 'Website'),
+              const SizedBox(height: 8),
+              _buildTextField(
+                  controller: phoneController, label: 'Phone Number'),
+              const SizedBox(height: 8),
+              const Text('Rating:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    icon: Icon(
+                      index < _rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _rating = index + 1.0;
+                      });
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 8),
+              SwitchListTile(
+                title: const Text('Mark as Featured'),
+                value: isFeatured,
+                onChanged: (value) {
+                  setState(() {
+                    isFeatured = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: saveCompany,
+                  child: Text(
+                    _editingCompanyId == null
+                        ? 'Add Company'
+                        : 'Update Company',
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: serviceTypeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Service Type',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: locationController,
-                  decoration: const InputDecoration(
-                    labelText: 'Location',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: websiteController,
-                  decoration: const InputDecoration(
-                    labelText: 'Website',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text('Rating:',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: List.generate(5, (index) {
-                    return IconButton(
-                      icon: Icon(
-                        index < _rating ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _rating = index + 1.0;
-                        });
-                      },
-                    );
-                  }),
-                ),
-                const SizedBox(height: 8),
-                SwitchListTile(
-                  title: const Text('Mark as Featured'),
-                  value: isFeatured,
-                  onChanged: (value) {
-                    setState(() {
-                      isFeatured = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    onPressed: saveCompany,
-                    child: Text(
-                      _editingCompanyId == null
-                          ? 'Add Company'
-                          : 'Update Company',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        const Divider(),
-        Expanded(
-          flex: 4,
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('companies')
-                .orderBy('isFeatured', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No Companies Found'));
-              }
+      ),
+    );
+  }
 
-              final companies = snapshot.data!.docs;
+  Widget _buildCompanyListSection() {
+    return Expanded(
+      flex: 6,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('companies')
+            .orderBy('isFeatured', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No Companies Found'));
+          }
 
-              return ListView.builder(
-                itemCount: companies.length,
-                itemBuilder: (context, index) {
-                  final company = companies[index];
-                  final isFeatured = company['isFeatured'] ?? false;
+          final companies = snapshot.data!.docs;
 
-                  return Card(
-                    color: isFeatured
-                        ? Colors.yellow[100]
-                        : null, 
-                    child: ListTile(
-                      title: Text(company['name']),
-                      subtitle: Text(
-                        'Service Type: ${company['serviceType']}\n'
-                        'Location: ${company['location']}\n'
-                        'Rating: ${company['rating']}',
+          return ListView.builder(
+            itemCount: companies.length,
+            itemBuilder: (context, index) {
+              final company = companies[index];
+              final isFeatured = company['isFeatured'] ?? false;
+
+              return Card(
+                color: isFeatured ? Colors.yellow[100] : null,
+                child: ListTile(
+                  title: Text(company['name']),
+                  subtitle: Text(
+                    'Service Type: ${company['serviceType']}\n'
+                    'Location: ${company['location']}\n'
+                    'Rating: ${company['rating']}',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => startEditingCompany(company),
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () => startEditingCompany(company),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => deleteCompany(company.id),
-                          ),
-                        ],
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => deleteCompany(company.id),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               );
             },
-          ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      {required TextEditingController controller, required String label}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
-      ],
+      ),
     );
   }
 }
-
 
 class BannerAdsAdminTab extends StatefulWidget {
   const BannerAdsAdminTab({super.key});
