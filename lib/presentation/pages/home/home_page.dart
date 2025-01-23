@@ -136,24 +136,32 @@ class HomePageState extends State<HomePage> {
                 ? 250
                 : MediaQuery.of(context).size.width > 800
                     ? 50
-                    : 10,
+                    : 30,
           ),
-          child: TextField(
-            onChanged: (query) {
-              setState(() {
-                searchQuery = query;
-              });
-              fetchCompaniesAndAds(searchQuery: query);
-            },
-            decoration: InputDecoration(
-              hintText: 'Search for logistics companies...',
-              filled: true,
-              fillColor: context.surfaceColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+          child: Container(
+            height: MediaQuery.of(context).size.height > 1200
+                ? 40
+                : MediaQuery.of(context).size.height > 800
+                    ? 40
+                    : 45,
+            child: TextField(
+              onChanged: (query) {
+                setState(() {
+                  searchQuery = query;
+                });
+                fetchCompaniesAndAds(searchQuery: query);
+              },
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(6),
+                hintText: 'Search for logistics companies...',
+                filled: true,
+                fillColor: context.surfaceColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: Icon(Icons.search, color: context.disabledColor),
               ),
-              prefixIcon: Icon(Icons.search, color: context.disabledColor),
             ),
           ),
         ),
@@ -234,7 +242,9 @@ class HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Image.network(ad.imageUrl,
-          fit: BoxFit.fill, height: 70, width: double.infinity),
+          fit: BoxFit.fill,
+          height: 70,
+          width: MediaQuery.of(context).size.width / 1.38),
     );
   }
 
