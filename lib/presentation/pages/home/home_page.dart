@@ -62,12 +62,8 @@ class HomePageState extends State<HomePage> {
           .orderBy('isFeatured', descending: true)
           .limit(8);
 
-      // Apply search query if provided
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        String lowerCaseQuery = searchQuery.toLowerCase();
-        query = query
-            // .where('name', isEqualTo: lowerCaseQuery)
-            .where('name', isLessThanOrEqualTo: '$lowerCaseQuery\uf8ff');
+        query = query.where('serviceType', isEqualTo: searchQuery);
       }
 
       if (page != null) {
@@ -153,7 +149,7 @@ class HomePageState extends State<HomePage> {
               },
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(6),
-                hintText: 'Search for logistics companies...',
+                hintText: 'Search by service type...',
                 filled: true,
                 fillColor: context.surfaceColor,
                 border: OutlineInputBorder(
