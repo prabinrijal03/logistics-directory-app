@@ -60,7 +60,7 @@ class HomePageState extends State<HomePage> {
       Query query = FirebaseFirestore.instance
           .collection('companies')
           .orderBy('isFeatured', descending: true)
-          .limit(8);
+          .limit(12);
 
       if (searchQuery != null && searchQuery.isNotEmpty) {
         query = query.where('serviceType', isEqualTo: searchQuery);
@@ -260,7 +260,7 @@ class HomePageState extends State<HomePage> {
                   Container(
                     width: MediaQuery.of(context).size.width / 2.5,
                     margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.network(ad1.imageUrl, fit: BoxFit.cover),
+                    child: Image.network(ad1.imageUrl, fit: BoxFit.fill),
                   ),
                 if (ad2 != null)
                   Container(
@@ -360,11 +360,25 @@ class HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      company.name,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            company.imageUrl!,
+                            height: 25,
+                            width: 25,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          company.name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                     Text(
                       'Service Type: ${company.serviceType}',

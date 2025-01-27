@@ -28,6 +28,7 @@ mixin _$CompanyModel {
   String get website => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   bool? get isFeatured => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
 
   /// Serializes this CompanyModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +54,8 @@ abstract class $CompanyModelCopyWith<$Res> {
       String phone,
       String website,
       double rating,
-      bool? isFeatured});
+      bool? isFeatured,
+      String? imageUrl});
 }
 
 /// @nodoc
@@ -79,6 +81,7 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
     Object? website = null,
     Object? rating = null,
     Object? isFeatured = freezed,
+    Object? imageUrl = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -113,6 +116,10 @@ class _$CompanyModelCopyWithImpl<$Res, $Val extends CompanyModel>
           ? _value.isFeatured
           : isFeatured // ignore: cast_nullable_to_non_nullable
               as bool?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -133,7 +140,8 @@ abstract class _$$CompanyModelImplCopyWith<$Res>
       String phone,
       String website,
       double rating,
-      bool? isFeatured});
+      bool? isFeatured,
+      String? imageUrl});
 }
 
 /// @nodoc
@@ -157,6 +165,7 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
     Object? website = null,
     Object? rating = null,
     Object? isFeatured = freezed,
+    Object? imageUrl = freezed,
   }) {
     return _then(_$CompanyModelImpl(
       name: null == name
@@ -191,6 +200,10 @@ class __$$CompanyModelImplCopyWithImpl<$Res>
           ? _value.isFeatured
           : isFeatured // ignore: cast_nullable_to_non_nullable
               as bool?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -206,7 +219,8 @@ class _$CompanyModelImpl implements _CompanyModel {
       required this.phone,
       required this.website,
       required this.rating,
-      this.isFeatured});
+      this.isFeatured,
+      this.imageUrl});
 
   factory _$CompanyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CompanyModelImplFromJson(json);
@@ -227,10 +241,12 @@ class _$CompanyModelImpl implements _CompanyModel {
   final double rating;
   @override
   final bool? isFeatured;
+  @override
+  final String? imageUrl;
 
   @override
   String toString() {
-    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location, email: $email, phone: $phone, website: $website, rating: $rating, isFeatured: $isFeatured)';
+    return 'CompanyModel(name: $name, serviceType: $serviceType, location: $location, email: $email, phone: $phone, website: $website, rating: $rating, isFeatured: $isFeatured, imageUrl: $imageUrl)';
   }
 
   @override
@@ -248,13 +264,15 @@ class _$CompanyModelImpl implements _CompanyModel {
             (identical(other.website, website) || other.website == website) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.isFeatured, isFeatured) ||
-                other.isFeatured == isFeatured));
+                other.isFeatured == isFeatured) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, serviceType, location,
-      email, phone, website, rating, isFeatured);
+      email, phone, website, rating, isFeatured, imageUrl);
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -281,7 +299,8 @@ abstract class _CompanyModel implements CompanyModel {
       required final String phone,
       required final String website,
       required final double rating,
-      final bool? isFeatured}) = _$CompanyModelImpl;
+      final bool? isFeatured,
+      final String? imageUrl}) = _$CompanyModelImpl;
 
   factory _CompanyModel.fromJson(Map<String, dynamic> json) =
       _$CompanyModelImpl.fromJson;
@@ -302,6 +321,8 @@ abstract class _CompanyModel implements CompanyModel {
   double get rating;
   @override
   bool? get isFeatured;
+  @override
+  String? get imageUrl;
 
   /// Create a copy of CompanyModel
   /// with the given fields replaced by the non-null parameter values.

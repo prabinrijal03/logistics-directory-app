@@ -16,6 +16,7 @@ _$CompanyModelImpl _$$CompanyModelImplFromJson(Map<String, dynamic> json) =>
       website: json['website'] as String,
       rating: (json['rating'] as num).toDouble(),
       isFeatured: json['isFeatured'] as bool?,
+      imageUrl: json['imageUrl'] as String?,
     );
 
 Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$$CompanyModelImplToJson(_$CompanyModelImpl instance) =>
       'website': instance.website,
       'rating': instance.rating,
       'isFeatured': instance.isFeatured,
+      'imageUrl': instance.imageUrl,
     };

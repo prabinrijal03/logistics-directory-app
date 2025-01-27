@@ -64,6 +64,8 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   String? _editingCompanyId;
   double _rating = 0.0;
   bool isFeatured = false;
+  Uint8List? _selectedLogo;
+  bool _isUploading = false;
 
   void clearControllers() {
     nameController.clear();
@@ -75,36 +77,108 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     setState(() {
       _editingCompanyId = null;
       _rating = 0.0;
+      _selectedLogo = null;
     });
+  }
+
+  Future<void> pickLogo() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (result != null && result.files.single.bytes != null) {
+      setState(() {
+        _selectedLogo = result.files.single.bytes!;
+      });
+      print('Logo selected. Size: ${_selectedLogo!.lengthInBytes} bytes');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No logo selected')),
+      );
+    }
+  }
+
+  Future<String?> uploadLogoToCloudinary(Uint8List logoBytes) async {
+    try {
+      final filename =
+          '${DateTime.now().millisecondsSinceEpoch}_company_logo.jpg';
+      final request =
+          http.MultipartRequest('POST', Uri.parse(UrlConstants.cloudinaryUrl))
+            ..fields['upload_preset'] = UrlConstants.cloudinaryUploadPreset
+            ..files.add(http.MultipartFile.fromBytes(
+              'file',
+              logoBytes,
+              filename: filename,
+              contentType: MediaType('image', 'jpeg'),
+            ));
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await http.Response.fromStream(response);
+        final data = jsonDecode(responseData.body);
+        return data['secure_url'];
+      } else {
+        final responseData = await http.Response.fromStream(response);
+        print('Cloudinary Error: ${responseData.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error uploading logo to Cloudinary: $e');
+      return null;
+    }
   }
 
   Future<void> saveCompany() async {
     if (nameController.text.isNotEmpty &&
         serviceTypeController.text.isNotEmpty &&
         locationController.text.isNotEmpty) {
-      final companyData = {
-        'name': nameController.text,
-        'serviceType': serviceTypeController.text,
-        'location': locationController.text,
-        'email': emailController.text,
-        'phone': phoneController.text,
-        'rating': _rating,
-        'website': websiteController.text,
-        'isFeatured': isFeatured,
-      };
+      setState(() {
+        _isUploading = true;
+      });
 
-      if (_editingCompanyId == null) {
-        await FirebaseFirestore.instance
-            .collection('companies')
-            .add(companyData);
-      } else {
-        await FirebaseFirestore.instance
-            .collection('companies')
-            .doc(_editingCompanyId)
-            .update(companyData);
+      String? imageUrl;
+      if (_selectedLogo != null) {
+        imageUrl = await uploadLogoToCloudinary(_selectedLogo!);
       }
 
-      clearControllers();
+      if (imageUrl != null || _editingCompanyId != null) {
+        final companyData = {
+          'name': nameController.text,
+          'serviceType': serviceTypeController.text,
+          'location': locationController.text,
+          'email': emailController.text,
+          'phone': phoneController.text,
+          'rating': _rating,
+          'website': websiteController.text,
+          'isFeatured': isFeatured,
+        };
+
+        if (imageUrl != null) {
+          companyData['imageUrl'] = imageUrl;
+        }
+
+        if (_editingCompanyId == null) {
+          await FirebaseFirestore.instance
+              .collection('companies')
+              .add(companyData);
+        } else {
+          await FirebaseFirestore.instance
+              .collection('companies')
+              .doc(_editingCompanyId)
+              .update(companyData);
+        }
+
+        clearControllers();
+        setState(() {
+          _isUploading = false;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logo upload failed')),
+        );
+        setState(() {
+          _isUploading = false;
+        });
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
@@ -226,18 +300,28 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
                 },
               ),
               const SizedBox(height: 8),
+              const Text('Company Logo:'),
+              _selectedLogo != null
+                  ? Image.memory(_selectedLogo!, height: 150)
+                  : ElevatedButton(
+                      onPressed: pickLogo,
+                      child: const Text('Pick Logo'),
+                    ),
+              const SizedBox(height: 8),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  onPressed: saveCompany,
-                  child: Text(
-                    _editingCompanyId == null
-                        ? 'Add Company'
-                        : 'Update Company',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  onPressed: _isUploading ? null : saveCompany,
+                  child: _isUploading
+                      ? const CircularProgressIndicator()
+                      : Text(
+                          _editingCompanyId == null
+                              ? 'Add Company'
+                              : 'Update Company',
+                          style: const TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
             ],

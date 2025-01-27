@@ -14,6 +14,7 @@ class CompanyModel with _$CompanyModel {
     required String website,
     required double rating,
     bool? isFeatured,
+    String? imageUrl,
   }) = _CompanyModel;
 
   factory CompanyModel.fromJson(Map<String, dynamic> json) =>
