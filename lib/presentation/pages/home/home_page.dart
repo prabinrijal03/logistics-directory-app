@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logistics_directory_app/app/extensions/build_context_entensions.dart';
-import 'package:logistics_directory_app/resources/route_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/models/ad_model/ad_model.dart';
 import '../../../../data/models/company_model/company_model.dart';
@@ -239,7 +237,7 @@ class HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Image.network(ad.imageUrl,
           fit: BoxFit.fill,
-          height: 70,
+          height: 80,
           width: MediaQuery.of(context).size.width / 1.38),
     );
   }
@@ -464,9 +462,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildPaginationControls(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    int totalPages = (totalCompaniesCount / 5).ceil(); // Total pages
+    int totalPages = (totalCompaniesCount / 5).ceil();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -476,11 +472,11 @@ class HomePageState extends State<HomePage> {
             onPressed: currentPage > 1
                 ? () {
                     setState(() {
-                      currentPage--; // Go to the previous page
+                      currentPage--;
                       fetchCompaniesAndAds(page: currentPage);
                     });
                   }
-                : null, // Disable button if on the first page
+                : null,
             child: const Text('Previous'),
           ),
           const SizedBox(width: 16),
@@ -490,29 +486,12 @@ class HomePageState extends State<HomePage> {
             onPressed: currentPage < totalPages
                 ? () {
                     setState(() {
-                      currentPage++; // Go to the next page
+                      currentPage++;
                       fetchCompaniesAndAds(page: currentPage);
                     });
                   }
-                : null, // Disable button if on the last page
+                : null,
             child: const Text('Next'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                  context,
-                  user == null
-                      ? AppRoute.login.path
-                      : AppRoute.dashboardPage.path);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            child: const Text(
-              "Dashboard",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
           ),
         ],
       ),
