@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logistics_directory_app/app/extensions/build_context_entensions.dart';
+import 'package:logistics_directory_app/resources/route_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/models/ad_model/ad_model.dart';
 import '../../../../data/models/company_model/company_model.dart';
@@ -223,69 +224,111 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildTopBannerAd(BuildContext context) {
-    if (ads.isEmpty) {
-      return Container(
-        color: Colors.grey.withOpacity(0.2),
-        height: 50,
-        alignment: Alignment.center,
-        child: const Text('Top Banner Ad'),
-      );
-    }
+    final topBannerAd = ads.firstWhere((ad) => ad.type == 'Top Banner Ad',
+        orElse: () =>
+            Ad(websiteUrl: '', imageUrl: 'assets/images/bb.png', type: ''));
 
-    final ad = ads.first;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Image.network(ad.imageUrl,
-          fit: BoxFit.fill,
-          height: 80,
-          width: MediaQuery.of(context).size.width / 1.38),
+      child: InkWell(
+        onTap: () async {
+          String urlString = topBannerAd.websiteUrl.trim();
+          if (!urlString.startsWith('http://') &&
+              !urlString.startsWith('https://')) {
+            urlString = 'https://$urlString';
+          }
+
+          final Uri url = Uri.parse(urlString);
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Could not launch the website')),
+            );
+          }
+        },
+        child: SizedBox(
+          height: 100,
+          width: 600,
+          child: Image.network(
+            topBannerAd.imageUrl,
+            fit: BoxFit.fill,
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildSidebarAds(BuildContext context) {
-    if (ads.isEmpty) return Container();
-
-    final ad1 = ads.length > 1 ? ads[1] : null;
-    final ad2 = ads.length > 2 ? ads[2] : null;
+    final sidebarAds =
+        ads.where((ad) => ad.type.startsWith('Sidebar Ad')).toList();
+    if (sidebarAds.isEmpty) return Container();
 
     return MediaQuery.of(context).size.width < 800
         ? SizedBox(
             height: 60,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: [
-                if (ad1 != null)
-                  Container(
+              children: sidebarAds.map((ad) {
+                return InkWell(
+                  onTap: () async {
+                    String urlString = ad.websiteUrl.trim();
+                    if (!urlString.startsWith('http://') &&
+                        !urlString.startsWith('https://')) {
+                      urlString = 'https://$urlString';
+                    }
+
+                    final Uri url = Uri.parse(urlString);
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Could not launch the website')),
+                      );
+                    }
+                  },
+                  child: Container(
                     width: MediaQuery.of(context).size.width / 2.5,
                     margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.network(ad1.imageUrl, fit: BoxFit.fill),
+                    child: Image.network(ad.imageUrl, fit: BoxFit.fill),
                   ),
-                if (ad2 != null)
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.network(ad2.imageUrl, fit: BoxFit.fill),
-                  ),
-              ],
+                );
+              }).toList(),
             ),
           )
         : SingleChildScrollView(
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 10,
               child: Column(
-                children: [
-                  if (ad1 != null)
-                    Container(
+                children: sidebarAds.map((ad) {
+                  return InkWell(
+                    onTap: () async {
+                      String urlString = ad.websiteUrl.trim();
+                      if (!urlString.startsWith('http://') &&
+                          !urlString.startsWith('https://')) {
+                        urlString = 'https://$urlString';
+                      }
+
+                      final Uri url = Uri.parse(urlString);
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url,
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Could not launch the website')),
+                        );
+                      }
+                    },
+                    child: Container(
                       height: 200,
                       margin: const EdgeInsets.only(bottom: 10),
-                      child: Image.network(ad1.imageUrl, fit: BoxFit.fill),
+                      child: Image.network(ad.imageUrl, fit: BoxFit.fill),
                     ),
-                  if (ad2 != null)
-                    SizedBox(
-                      height: 200,
-                      child: Image.network(ad2.imageUrl, fit: BoxFit.fill),
-                    ),
-                ],
+                  );
+                }).toList(),
               ),
             ),
           );
@@ -493,6 +536,11 @@ class HomePageState extends State<HomePage> {
                 : null,
             child: const Text('Next'),
           ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoute.dashboardPage.path);
+              },
+              child: Text('Dashboard')),
         ],
       ),
     );

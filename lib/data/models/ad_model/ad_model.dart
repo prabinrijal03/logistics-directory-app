@@ -6,8 +6,9 @@ part 'ad_model.g.dart';
 @freezed
 class Ad with _$Ad {
   const factory Ad({
-    required String title,
+    required String websiteUrl,
     required String imageUrl,
+    required String type,
   }) = _Ad;
 
   factory Ad.fromJson(Map<String, dynamic> json) => _$AdFromJson(json);

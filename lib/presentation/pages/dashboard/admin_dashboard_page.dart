@@ -14,6 +14,7 @@ class AdminDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Admin Dashboard',
           style: TextStyle(color: Colors.white),
@@ -472,7 +473,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
 
       if (imageUrl != null || _editingAdId != null) {
         final adData = {
-          'title': titleController.text,
+          'websiteUrl': titleController.text,
           'type': _selectedAdType,
         };
 
@@ -517,7 +518,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
   void startEditingAd(QueryDocumentSnapshot ad) {
     setState(() {
       _editingAdId = ad.id;
-      titleController.text = ad['title'];
+      titleController.text = ad['websiteUrl'];
       _selectedAdType = ad['type'];
       _selectedImage = null;
     });
@@ -553,7 +554,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Ad Title',
+                  labelText: 'Website URL',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -603,7 +604,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
                 itemBuilder: (context, index) {
                   final ad = ads[index];
                   return ListTile(
-                    title: Text('${ad['type']} - ${ad['title']}'),
+                    title: Text('${ad['type']} - ${ad['websiteUrl']}'),
                     subtitle: Image.network(ad['imageUrl'], height: 50),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

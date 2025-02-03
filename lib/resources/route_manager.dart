@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logistics_directory_app/presentation/pages/authentication/register.dart';
-
 import '../presentation/pages/authentication/login.dart';
 import '../presentation/pages/dashboard/admin_dashboard_page.dart';
 import '../presentation/pages/home/home_page.dart';
@@ -8,7 +6,7 @@ import '../presentation/pages/home/home_page.dart';
 enum AppRoute {
   homePage('/home', HomePage()),
   dashboardPage('/dashboard', AdminDashboardPage()),
-  register('/register', Register()),
+  // register('/register', Register()),
   login('/login', Login());
 
   final String path;

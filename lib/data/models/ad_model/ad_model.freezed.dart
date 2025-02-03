@@ -20,8 +20,9 @@ Ad _$AdFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Ad {
-  String get title => throw _privateConstructorUsedError;
+  String get websiteUrl => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
 
   /// Serializes this Ad to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -37,7 +38,7 @@ abstract class $AdCopyWith<$Res> {
   factory $AdCopyWith(Ad value, $Res Function(Ad) then) =
       _$AdCopyWithImpl<$Res, Ad>;
   @useResult
-  $Res call({String title, String imageUrl});
+  $Res call({String websiteUrl, String imageUrl, String type});
 }
 
 /// @nodoc
@@ -54,17 +55,22 @@ class _$AdCopyWithImpl<$Res, $Val extends Ad> implements $AdCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? title = null,
+    Object? websiteUrl = null,
     Object? imageUrl = null,
+    Object? type = null,
   }) {
     return _then(_value.copyWith(
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
+      websiteUrl: null == websiteUrl
+          ? _value.websiteUrl
+          : websiteUrl // ignore: cast_nullable_to_non_nullable
               as String,
       imageUrl: null == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -76,7 +82,7 @@ abstract class _$$AdImplCopyWith<$Res> implements $AdCopyWith<$Res> {
       __$$AdImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String title, String imageUrl});
+  $Res call({String websiteUrl, String imageUrl, String type});
 }
 
 /// @nodoc
@@ -90,17 +96,22 @@ class __$$AdImplCopyWithImpl<$Res> extends _$AdCopyWithImpl<$Res, _$AdImpl>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? title = null,
+    Object? websiteUrl = null,
     Object? imageUrl = null,
+    Object? type = null,
   }) {
     return _then(_$AdImpl(
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
+      websiteUrl: null == websiteUrl
+          ? _value.websiteUrl
+          : websiteUrl // ignore: cast_nullable_to_non_nullable
               as String,
       imageUrl: null == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -109,19 +120,22 @@ class __$$AdImplCopyWithImpl<$Res> extends _$AdCopyWithImpl<$Res, _$AdImpl>
 /// @nodoc
 @JsonSerializable()
 class _$AdImpl implements _Ad {
-  const _$AdImpl({required this.title, required this.imageUrl});
+  const _$AdImpl(
+      {required this.websiteUrl, required this.imageUrl, required this.type});
 
   factory _$AdImpl.fromJson(Map<String, dynamic> json) =>
       _$$AdImplFromJson(json);
 
   @override
-  final String title;
+  final String websiteUrl;
   @override
   final String imageUrl;
+  @override
+  final String type;
 
   @override
   String toString() {
-    return 'Ad(title: $title, imageUrl: $imageUrl)';
+    return 'Ad(websiteUrl: $websiteUrl, imageUrl: $imageUrl, type: $type)';
   }
 
   @override
@@ -129,14 +143,16 @@ class _$AdImpl implements _Ad {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AdImpl &&
-            (identical(other.title, title) || other.title == title) &&
+            (identical(other.websiteUrl, websiteUrl) ||
+                other.websiteUrl == websiteUrl) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, title, imageUrl);
+  int get hashCode => Object.hash(runtimeType, websiteUrl, imageUrl, type);
 
   /// Create a copy of Ad
   /// with the given fields replaced by the non-null parameter values.
@@ -156,14 +172,18 @@ class _$AdImpl implements _Ad {
 
 abstract class _Ad implements Ad {
   const factory _Ad(
-      {required final String title, required final String imageUrl}) = _$AdImpl;
+      {required final String websiteUrl,
+      required final String imageUrl,
+      required final String type}) = _$AdImpl;
 
   factory _Ad.fromJson(Map<String, dynamic> json) = _$AdImpl.fromJson;
 
   @override
-  String get title;
+  String get websiteUrl;
   @override
   String get imageUrl;
+  @override
+  String get type;
 
   /// Create a copy of Ad
   /// with the given fields replaced by the non-null parameter values.
