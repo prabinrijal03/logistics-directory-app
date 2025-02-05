@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          flex: 4, // Main content takes 4 parts of the screen
+                          flex: 4,
                           child: Column(
                             children: [
                               _buildTopBannerAd(context, ads),
@@ -108,14 +108,14 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          flex: 1, // Sidebar ads take 1 part of the screen
+                          flex: 1,
                           child: _buildSidebarAds(
                               context, ads), // Sidebar ads on the right
                         ),
                       ],
                     ),
                   ),
-                  _buildFooter(context), // Footer spans full width
+                  _buildFooter(context),
                 ],
               );
             }
@@ -169,6 +169,7 @@ class HomePage extends StatelessWidget {
       builder: (context, constraints) {
         final isWideScreen = constraints.maxWidth > 1200;
         final isMediumScreen = constraints.maxWidth > 800;
+        final isMobile = MediaQuery.of(context).size.width < 800;
 
         return GridView.builder(
           padding: EdgeInsets.symmetric(
@@ -179,112 +180,132 @@ class HomePage extends StatelessWidget {
             crossAxisCount: isWideScreen ? 4 : (isMediumScreen ? 3 : 2),
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            childAspectRatio:
-                isWideScreen ? 3 / 2 : (isMediumScreen ? 3 / 1.5 : 3 / 2.5),
+            childAspectRatio: isMobile ? 1.4 : (isMediumScreen ? 2.1 : 2.5),
           ),
           itemCount: companies.length,
           itemBuilder: (context, index) {
             final company = companies[index];
             final isFeatured = company.isFeatured ?? false;
 
-            return Card(
-              color: isFeatured ? Colors.yellow[100] : null,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0, top: 6),
-                child: Column(
+            return Padding(
+              padding: const EdgeInsets.only(
+                right: 4.0,
+                bottom: 4,
+              ),
+              child: Container(
+                padding: const EdgeInsets.only(left: 6, right: 6, top: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: isFeatured ? Colors.yellow[100] : Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 1.5,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            company.imageUrl!,
-                            height: 25,
-                            width: 25,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
                         Text(
                           company.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: isMobile ? 12 : 15,
+                          ),
                           overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Service Type: ${company.serviceType}',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: isMobile ? 10 : 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Location: ${company.location}',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: isMobile ? 10 : 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Email: ${company.email}',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: isMobile ? 10 : 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Phone: ${company.phone}',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: isMobile ? 10 : 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text.rich(
+                          TextSpan(
+                            text: company.website,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: isMobile ? 10 : 12,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                String urlString = company.website.trim();
+                                if (!urlString.startsWith('http://') &&
+                                    !urlString.startsWith('https://')) {
+                                  urlString = 'https://$urlString';
+                                }
+
+                                final Uri url = Uri.parse(urlString);
+                                if (await canLaunchUrl(url)) {
+                                  await launchUrl(url,
+                                      mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Could not launch the website')),
+                                  );
+                                }
+                              },
+                          ),
+                        ),
+                        Row(
+                          children: List.generate(
+                            5,
+                            (index) => Icon(
+                              index < company.rating.round()
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    Text(
-                      'Service Type: ${company.serviceType}',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Location: ${company.location}',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Email: ${company.email}',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Phone: ${company.phone}',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text.rich(
-                      TextSpan(
-                        text: company.website,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 12,
+                    Container(
+                      height: isMobile ? 20 : 50,
+                      width: isMobile ? 20 : 50,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            company.imageUrl!,
+                          ),
+                          fit: BoxFit.fill,
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            String urlString = company.website.trim();
-                            if (!urlString.startsWith('http://') &&
-                                !urlString.startsWith('https://')) {
-                              urlString = 'https://$urlString';
-                            }
-
-                            final Uri url = Uri.parse(urlString);
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url,
-                                  mode: LaunchMode.externalApplication);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Could not launch the website')),
-                              );
-                            }
-                          },
-                      ),
-                    ),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          index < company.rating.round()
-                              ? Icons.star
-                              : Icons.star_border,
-                          color: Colors.amber,
-                          size: 16,
-                        ),
+                        shape: BoxShape.circle,
                       ),
                     ),
                   ],
@@ -311,7 +332,7 @@ class HomePage extends StatelessWidget {
                         .read<HomeBloc>()
                         .add(const HomeEvent.loadPrevious());
                   }
-                : null, // Disable if on the first page
+                : null,
             child: const Text('Previous'),
           ),
           const SizedBox(width: 16),
@@ -322,7 +343,7 @@ class HomePage extends StatelessWidget {
                 ? () {
                     context.read<HomeBloc>().add(const HomeEvent.loadMore());
                   }
-                : null, // Disable if on the last page
+                : null,
             child: const Text('Next'),
           ),
         ],
@@ -331,7 +352,6 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildSidebarAds(BuildContext context, List<Ad> ads) {
-    // Get specific sidebar ads by exact type
     final ad1 = ads.firstWhere(
       (ad) => ad.type == 'Sidebar Ad 1',
       orElse: () => Ad(websiteUrl: '', imageUrl: '', type: ''),
@@ -341,7 +361,6 @@ class HomePage extends StatelessWidget {
       orElse: () => Ad(websiteUrl: '', imageUrl: '', type: ''),
     );
 
-    // Create a list of non-empty ads
     final sidebarAds =
         [ad1, ad2].where((ad) => ad.imageUrl.isNotEmpty).toList();
     if (sidebarAds.isEmpty) return Container();
@@ -350,12 +369,15 @@ class HomePage extends StatelessWidget {
 
     if (isMobile) {
       // Mobile: Horizontal layout at the bottom
-      return SizedBox(
-        height: 100,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children:
-              sidebarAds.map((ad) => _buildSidebarAdItem(context, ad)).toList(),
+      return SingleChildScrollView(
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: sidebarAds
+                .map((ad) => _buildSidebarAdItem(context, ad))
+                .toList(),
+          ),
         ),
       );
     } else {
@@ -363,10 +385,13 @@ class HomePage extends StatelessWidget {
       return SingleChildScrollView(
         child: SizedBox(
           width: 200,
-          child: Column(
-            children: sidebarAds
-                .map((ad) => _buildSidebarAdItem(context, ad))
-                .toList(),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Column(
+              children: sidebarAds
+                  .map((ad) => _buildSidebarAdItem(context, ad))
+                  .toList(),
+            ),
           ),
         ),
       );
@@ -395,8 +420,8 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         height: 200,
+        margin: const EdgeInsets.only(bottom: 5),
         width: MediaQuery.of(context).size.width / 2.5,
-        margin: const EdgeInsets.only(bottom: 10),
         child: Image.network(ad.imageUrl, fit: BoxFit.fill),
       ),
     );
@@ -406,7 +431,7 @@ class HomePage extends StatelessWidget {
     return Container(
       color: Colors.green,
       height: 50,
-      width: double.infinity, // Full width
+      width: double.infinity,
       alignment: Alignment.center,
       child: const Text(
         'Contact Info | Terms | Privacy Policy',
