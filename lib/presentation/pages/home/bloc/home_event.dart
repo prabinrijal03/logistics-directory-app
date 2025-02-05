@@ -2,8 +2,15 @@ part of 'home_bloc.dart';
 
 @freezed
 class HomeEvent with _$HomeEvent {
-  const factory HomeEvent.started() = _Started;
-  const factory HomeEvent.searchChanged(String query) = _SearchChanged;
-  const factory HomeEvent.loadNextPage() = _LoadNextPage;
-  const factory HomeEvent.loadPreviousPage() = _LoadPreviousPage;
+  /// Fetches companies and ads
+  const factory HomeEvent.fetch({String? searchQuery}) = FetchCompanies;
+
+  /// Searches companies by service type
+  const factory HomeEvent.search(String query) = SearchCompanies;
+
+  /// Loads more companies (pagination)
+  const factory HomeEvent.loadMore() = LoadMoreCompanies;
+    /// Loads previous companies (pagination)
+  const factory HomeEvent.loadPrevious() = LoadPreviousCompanies;
+
 }

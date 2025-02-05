@@ -1,232 +1,137 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logistics_directory_app/app/extensions/build_context_entensions.dart';
-import 'package:logistics_directory_app/resources/route_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../data/models/ad_model/ad_model.dart';
-import '../../../../data/models/company_model/company_model.dart';
 
-class HomePage extends StatefulWidget {
+import '../../../data/models/ad_model/ad_model.dart';
+import '../../../data/models/company_model/company_model.dart';
+import 'bloc/home_bloc.dart';
+
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  HomePageState createState() => HomePageState();
-}
-
-class HomePageState extends State<HomePage> {
-  List<CompanyModel> companies = [];
-  List<Ad> ads = [];
-  String searchQuery = '';
-  int currentPage = 1;
-  bool isLoading = false;
-  String? errorMessage;
-  bool canLoadMore = false;
-  bool isFeatured = false;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchCompaniesAndAds();
-  }
-
-  List<DocumentSnapshot> lastVisibleDocuments = [];
-
-  DocumentSnapshot<Object?>? lastVisibleDocument;
-
-  List<DocumentSnapshot<Object?>> paginationStack = [];
-  int totalCompaniesCount = 0;
-  Future<void> fetchCompaniesAndAds({int? page, String? searchQuery}) async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-
-    try {
-      final totalSnapshot =
-          await FirebaseFirestore.instance.collection('companies').get();
-
-      setState(() {
-        totalCompaniesCount = totalSnapshot.size;
-      });
-
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        paginationStack.clear();
-        companies.clear();
-        ads.clear();
-      }
-
-      Query query = FirebaseFirestore.instance
-          .collection('companies')
-          .orderBy('isFeatured', descending: true)
-          .limit(12);
-
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        query = query.where('serviceType', isEqualTo: searchQuery);
-      }
-
-      if (page != null) {
-        if (page > paginationStack.length) {
-          if (paginationStack.isNotEmpty) {
-            query = query.startAfterDocument(paginationStack.last);
-          }
-        } else if (page <= paginationStack.length && page > 0) {
-          if (page > 1) {
-            query = query.startAfterDocument(paginationStack[page - 2]);
-          }
-        }
-      }
-
-      final companiesSnapshot = await query.get();
-      final fetchedCompanies = companiesSnapshot.docs
-          .map((doc) =>
-              CompanyModel.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-
-      if (companiesSnapshot.docs.isNotEmpty) {
-        if (page == null || page > paginationStack.length) {
-          paginationStack.add(companiesSnapshot.docs.last);
-        } else if (page < paginationStack.length) {
-          paginationStack = paginationStack.sublist(0, page);
-        }
-      }
-
-      final adsSnapshot =
-          await FirebaseFirestore.instance.collection('ads').get();
-      final fetchedAds =
-          adsSnapshot.docs.map((doc) => Ad.fromJson(doc.data())).toList();
-
-      setState(() {
-        companies = fetchedCompanies;
-        ads = fetchedAds;
-        isLoading = false;
-      });
-
-      if (fetchedCompanies.length < 5) {
-        setState(() {
-          canLoadMore = false;
-        });
-      } else {
-        setState(() {
-          canLoadMore = true;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.green,
-        title: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width > 1200
-                ? 250
-                : MediaQuery.of(context).size.width > 800
-                    ? 50
-                    : 30,
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height > 1200
-                ? 40
-                : MediaQuery.of(context).size.height > 800
-                    ? 40
-                    : 45,
-            child: TextField(
-              onChanged: (query) {
-                setState(() {
-                  searchQuery = query;
-                });
-                fetchCompaniesAndAds(searchQuery: query);
-              },
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(6),
-                hintText: 'Search by service type...',
-                filled: true,
-                fillColor: context.surfaceColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+    return BlocProvider(
+      create: (context) => HomeBloc()..add(const HomeEvent.fetch()),
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: _buildBody(context),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.green,
+      title: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width > 1200
+              ? 250
+              : MediaQuery.of(context).size.width > 800
+                  ? 50
+                  : 30,
+        ),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height > 1200
+              ? 40
+              : MediaQuery.of(context).size.height > 800
+                  ? 40
+                  : 45,
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              return TextField(
+                onChanged: (query) {
+                  context.read<HomeBloc>().add(HomeEvent.search(query));
+                },
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(6),
+                  hintText: 'Search by service type...',
+                  filled: true,
+                  fillColor: context.surfaceColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: Icon(Icons.search, color: context.disabledColor),
                 ),
-                prefixIcon: Icon(Icons.search, color: context.disabledColor),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
-          return Stack(
-            children: [
-              if (isMobile)
-                _buildMobileLayout(context)
-              else
-                _buildDesktopLayout(context),
-            ],
-          );
-        },
-      ),
     );
   }
 
-  Widget _buildMobileLayout(BuildContext context) {
-    return Column(
-      children: [
-        _buildTopBannerAd(context),
-        Expanded(child: _buildCompanyList(context)),
-        _buildPaginationControls(context),
-        _buildSidebarAds(context),
-        _buildFooter(context),
-      ],
-    );
-  }
+  Widget _buildBody(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => const SizedBox.shrink(),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          loaded: (companies, ads, isLoadingMore, canLoadMore, canLoadPrevious,
+              totalCompaniesCount, currentPage, totalPages) {
+            final isMobile = MediaQuery.of(context).size.width < 800;
 
-  Widget _buildDesktopLayout(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWideScreen = constraints.maxWidth > 1200;
-        final isMediumScreen = constraints.maxWidth > 800;
-
-        return Column(
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (isMobile) {
+              // Mobile layout
+              return Column(
+                children: [
+                  _buildTopBannerAd(context, ads),
+                  Expanded(child: _buildCompanyList(context, companies)),
+                  _buildPaginationControls(
+                      context, totalCompaniesCount, currentPage, totalPages),
+                  _buildSidebarAds(context, ads), // Sidebar ads at the bottom
+                  _buildFooter(context),
+                ],
+              );
+            } else {
+              // Desktop layout
+              return Column(
                 children: [
                   Expanded(
-                    flex: isWideScreen ? 4 : 3,
-                    child: Column(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTopBannerAd(context),
-                        Expanded(child: _buildCompanyList(context)),
+                        Expanded(
+                          flex: 4, // Main content takes 4 parts of the screen
+                          child: Column(
+                            children: [
+                              _buildTopBannerAd(context, ads),
+                              Expanded(
+                                  child: _buildCompanyList(context, companies)),
+                              _buildPaginationControls(context,
+                                  totalCompaniesCount, currentPage, totalPages),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1, // Sidebar ads take 1 part of the screen
+                          child: _buildSidebarAds(
+                              context, ads), // Sidebar ads on the right
+                        ),
                       ],
                     ),
                   ),
-                  if (isMediumScreen)
-                    Expanded(flex: 1, child: _buildSidebarAds(context)),
+                  _buildFooter(context), // Footer spans full width
                 ],
-              ),
-            ),
-            _buildPaginationControls(context),
-            _buildFooter(context),
-          ],
+              );
+            }
+          },
+          error: (message) => Center(child: Text(message)),
         );
       },
     );
   }
 
-  Widget _buildTopBannerAd(BuildContext context) {
-    final topBannerAd = ads.firstWhere((ad) => ad.type == 'Top Banner Ad',
-        orElse: () =>
-            Ad(websiteUrl: '', imageUrl: 'assets/images/bb.png', type: ''));
+  Widget _buildTopBannerAd(BuildContext context, List<Ad> ads) {
+    final topBannerAd = ads.firstWhere(
+      (ad) => ad.type == 'Top Banner Ad',
+      orElse: () =>
+          Ad(websiteUrl: '', imageUrl: 'assets/images/bb.png', type: ''),
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -259,119 +164,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSidebarAds(BuildContext context) {
-    final sidebarAds =
-        ads.where((ad) => ad.type.startsWith('Sidebar Ad')).toList();
-    if (sidebarAds.isEmpty) return Container();
-
-    return MediaQuery.of(context).size.width < 800
-        ? SizedBox(
-            height: 60,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: sidebarAds.map((ad) {
-                return InkWell(
-                  onTap: () async {
-                    String urlString = ad.websiteUrl.trim();
-                    if (!urlString.startsWith('http://') &&
-                        !urlString.startsWith('https://')) {
-                      urlString = 'https://$urlString';
-                    }
-
-                    final Uri url = Uri.parse(urlString);
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url,
-                          mode: LaunchMode.externalApplication);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Could not launch the website')),
-                      );
-                    }
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.network(ad.imageUrl, fit: BoxFit.fill),
-                  ),
-                );
-              }).toList(),
-            ),
-          )
-        : SingleChildScrollView(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width / 10,
-              child: Column(
-                children: sidebarAds.map((ad) {
-                  return InkWell(
-                    onTap: () async {
-                      String urlString = ad.websiteUrl.trim();
-                      if (!urlString.startsWith('http://') &&
-                          !urlString.startsWith('https://')) {
-                        urlString = 'https://$urlString';
-                      }
-
-                      final Uri url = Uri.parse(urlString);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url,
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Could not launch the website')),
-                        );
-                      }
-                    },
-                    child: Container(
-                      height: 200,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: Image.network(ad.imageUrl, fit: BoxFit.fill),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-  }
-
-  Widget _buildFooter(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      height: 50,
-      width: double.infinity,
-      alignment: Alignment.center,
-      child: const Text(
-        'Contact Info | Terms | Privacy Policy',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-  }
-
-  Widget _buildCompanyList(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(errorMessage!),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => fetchCompaniesAndAds(),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (companies.isEmpty) {
-      return const Center(child: Text('No companies available.'));
-    }
-
+  Widget _buildCompanyList(BuildContext context, List<CompanyModel> companies) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWideScreen = constraints.maxWidth > 1200;
@@ -412,7 +205,7 @@ class HomePageState extends State<HomePage> {
                             fit: BoxFit.fill,
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           company.name,
                           style: const TextStyle(
@@ -504,8 +297,8 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPaginationControls(BuildContext context) {
-    int totalPages = (totalCompaniesCount / 5).ceil();
+  Widget _buildPaginationControls(BuildContext context, int totalCompaniesCount,
+      int currentPage, int totalPages) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -514,12 +307,11 @@ class HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: currentPage > 1
                 ? () {
-                    setState(() {
-                      currentPage--;
-                      fetchCompaniesAndAds(page: currentPage);
-                    });
+                    context
+                        .read<HomeBloc>()
+                        .add(const HomeEvent.loadPrevious());
                   }
-                : null,
+                : null, // Disable if on the first page
             child: const Text('Previous'),
           ),
           const SizedBox(width: 16),
@@ -528,20 +320,97 @@ class HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: currentPage < totalPages
                 ? () {
-                    setState(() {
-                      currentPage++;
-                      fetchCompaniesAndAds(page: currentPage);
-                    });
+                    context.read<HomeBloc>().add(const HomeEvent.loadMore());
                   }
-                : null,
+                : null, // Disable if on the last page
             child: const Text('Next'),
           ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoute.dashboardPage.path);
-              },
-              child: Text('Dashboard')),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSidebarAds(BuildContext context, List<Ad> ads) {
+    // Get specific sidebar ads by exact type
+    final ad1 = ads.firstWhere(
+      (ad) => ad.type == 'Sidebar Ad 1',
+      orElse: () => Ad(websiteUrl: '', imageUrl: '', type: ''),
+    );
+    final ad2 = ads.firstWhere(
+      (ad) => ad.type == 'Sidebar Ad 2',
+      orElse: () => Ad(websiteUrl: '', imageUrl: '', type: ''),
+    );
+
+    // Create a list of non-empty ads
+    final sidebarAds =
+        [ad1, ad2].where((ad) => ad.imageUrl.isNotEmpty).toList();
+    if (sidebarAds.isEmpty) return Container();
+
+    final isMobile = MediaQuery.of(context).size.width < 800;
+
+    if (isMobile) {
+      // Mobile: Horizontal layout at the bottom
+      return SizedBox(
+        height: 100,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children:
+              sidebarAds.map((ad) => _buildSidebarAdItem(context, ad)).toList(),
+        ),
+      );
+    } else {
+      // Desktop: Vertical layout on the right side
+      return SingleChildScrollView(
+        child: SizedBox(
+          width: 200,
+          child: Column(
+            children: sidebarAds
+                .map((ad) => _buildSidebarAdItem(context, ad))
+                .toList(),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildSidebarAdItem(BuildContext context, Ad ad) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      onTap: () async {
+        String urlString = ad.websiteUrl.trim();
+        if (!urlString.startsWith('http://') &&
+            !urlString.startsWith('https://')) {
+          urlString = 'https://$urlString';
+        }
+
+        final Uri url = Uri.parse(urlString);
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not launch the website')),
+          );
+        }
+      },
+      child: Container(
+        height: 200,
+        width: MediaQuery.of(context).size.width / 2.5,
+        margin: const EdgeInsets.only(bottom: 10),
+        child: Image.network(ad.imageUrl, fit: BoxFit.fill),
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Container(
+      color: Colors.green,
+      height: 50,
+      width: double.infinity, // Full width
+      alignment: Alignment.center,
+      child: const Text(
+        'Contact Info | Terms | Privacy Policy',
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
