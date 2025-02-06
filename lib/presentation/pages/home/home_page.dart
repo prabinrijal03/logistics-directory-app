@@ -6,7 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/models/ad_model/ad_model.dart';
 import '../../../data/models/company_model/company_model.dart';
+
 import 'bloc/home_bloc.dart';
+
+/// HomePage is the main screen of the application, displaying a list of companies
+/// along with advertisements. It utilizes Bloc for state management and handles
+/// pagination, search, and layout adaptation for different screen sizes.
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,6 +27,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Builds the AppBar containing a search field that allows users to filter
+  /// companies by service type.
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
@@ -65,6 +72,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Builds the main body of the page, displaying either a loading indicator,
+  /// an error message, or the list of companies along with advertisements.
   Widget _buildBody(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
@@ -126,6 +135,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Displays the top banner advertisement, which is clickable and launches
+  /// the associated website when tapped.
+
   Widget _buildTopBannerAd(BuildContext context, List<Ad> ads) {
     final topBannerAd = ads.firstWhere(
       (ad) => ad.type == 'Top Banner Ad',
@@ -164,6 +176,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Displays a list of companies in a grid format, with layout adjustments
+  /// based on the screen size. Each company is displayed with its details and logo.
   Widget _buildCompanyList(BuildContext context, List<CompanyModel> companies) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -318,6 +332,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Builds pagination controls to navigate between pages of companies.
+
   Widget _buildPaginationControls(BuildContext context, int totalCompaniesCount,
       int currentPage, int totalPages) {
     return Padding(
@@ -350,6 +366,8 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
+  /// Builds sidebar ads displayed either on the right (desktop) or bottom (mobile).
 
   Widget _buildSidebarAds(BuildContext context, List<Ad> ads) {
     final ad1 = ads.firstWhere(
@@ -398,6 +416,9 @@ class HomePage extends StatelessWidget {
     }
   }
 
+  /// Builds individual sidebar ad item.
+  /// Opens the ad's website when tapped.
+
   Widget _buildSidebarAdItem(BuildContext context, Ad ad) {
     return InkWell(
       splashColor: Colors.transparent,
@@ -427,6 +448,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Builds the footer section with basic contact info and links.
   Widget _buildFooter(BuildContext context) {
     return Container(
       color: Colors.green,

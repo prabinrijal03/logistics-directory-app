@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 import 'package:logistics_directory_app/app/constants/constants.dart';
 
+/// Admin Dashboard page where users can manage companies and banner ads.
 class AdminDashboardPage extends StatelessWidget {
   const AdminDashboardPage({super.key});
 
@@ -48,6 +49,7 @@ class AdminDashboardPage extends StatelessWidget {
   }
 }
 
+/// A stateful widget for managing companies in the admin dashboard.
 class CompaniesAdminTab extends StatefulWidget {
   const CompaniesAdminTab({super.key});
 
@@ -56,18 +58,21 @@ class CompaniesAdminTab extends StatefulWidget {
 }
 
 class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
+  // Controllers for text input fields.
   final TextEditingController nameController = TextEditingController();
   final TextEditingController serviceTypeController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController websiteController = TextEditingController();
+  // Company-related data
   String? _editingCompanyId;
   double _rating = 0.0;
   bool isFeatured = false;
   Uint8List? _selectedLogo;
   bool _isUploading = false;
 
+  /// Clears all the form fields and resets state values.
   void clearControllers() {
     nameController.clear();
     serviceTypeController.clear();
@@ -81,6 +86,8 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
       _selectedLogo = null;
     });
   }
+
+  /// Picks a logo image from the file system using file picker.
 
   Future<void> pickLogo() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.image);
@@ -97,6 +104,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     }
   }
 
+  /// Uploads the logo image to Cloudinary and returns the URL.
   Future<String?> uploadLogoToCloudinary(Uint8List logoBytes) async {
     try {
       final filename =
@@ -128,6 +136,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     }
   }
 
+  /// Saves the company data to Firestore.
   Future<void> saveCompany() async {
     if (nameController.text.isNotEmpty &&
         serviceTypeController.text.isNotEmpty &&
@@ -187,6 +196,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     }
   }
 
+  /// Starts editing a company by populating the form with existing data.
   void startEditingCompany(QueryDocumentSnapshot company) {
     setState(() {
       _editingCompanyId = company.id;
@@ -200,6 +210,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     });
   }
 
+  /// Deletes a company from Firestore.
   Future<void> deleteCompany(String id) async {
     await FirebaseFirestore.instance.collection('companies').doc(id).delete();
   }
@@ -227,6 +238,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     );
   }
 
+  // Builds the form section where new companies are added or existing companies are edited.
   Widget _buildFormSection() {
     return Expanded(
       flex: 3,
@@ -332,6 +344,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     );
   }
 
+  // Builds the section displaying a list of companies from Firestore.
   Widget _buildCompanyListSection() {
     return Expanded(
       flex: 6,
@@ -387,6 +400,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
     );
   }
 
+  // Helper method to build text fields.
   Widget _buildTextField(
       {required TextEditingController controller, required String label}) {
     return TextField(
@@ -401,6 +415,7 @@ class _CompaniesAdminTabState extends State<CompaniesAdminTab> {
   }
 }
 
+/// Banner Ads Admin Tab for managing banner ads in the admin dashboard.
 class BannerAdsAdminTab extends StatefulWidget {
   const BannerAdsAdminTab({super.key});
 
@@ -429,6 +444,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
     }
   }
 
+  /// Uploads the image to Cloudinary and returns the URL.
   Future<String?> uploadImageToCloudinary(Uint8List imageBytes) async {
     try {
       final filename = '${DateTime.now().millisecondsSinceEpoch}_ad_image.jpg';
@@ -459,6 +475,7 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
     }
   }
 
+  /// Saves the ad data to Firestore.
   Future<void> saveAd() async {
     if (titleController.text.isNotEmpty &&
         (_selectedImage != null || _editingAdId != null)) {
@@ -511,10 +528,12 @@ class BannerAdsAdminTabState extends State<BannerAdsAdminTab> {
     }
   }
 
+  /// Deletes an ad from Firestore.
   Future<void> deleteAd(String adId) async {
     await FirebaseFirestore.instance.collection('ads').doc(adId).delete();
   }
 
+  /// Starts editing an ad by populating the form with existing data.
   void startEditingAd(QueryDocumentSnapshot ad) {
     setState(() {
       _editingAdId = ad.id;
