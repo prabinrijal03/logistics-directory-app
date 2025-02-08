@@ -12,6 +12,7 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final List<List<DocumentSnapshot>> _paginationStack = [];
+  DocumentSnapshot? _lastVisibleDocument;
   int _totalCompaniesCount = 0;
   int _currentPageIndex = 0;
 
@@ -20,6 +21,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SearchCompanies>(_onSearchCompanies);
     on<LoadMoreCompanies>(_onLoadMoreCompanies);
     on<LoadPreviousCompanies>(_onLoadPreviousCompanies);
+     on<Reset>(_onReset);
+  }
+
+    Future<void> _onReset(Reset event, Emitter<HomeState> emit) async {
+    _paginationStack.clear();
+    _lastVisibleDocument = null;
+    _currentPageIndex = 0;
+    await _fetchCompanies(emit: emit);
   }
 
   /// Fetches the initial list of companies with an optional search query.
@@ -29,30 +38,48 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }) async {
     emit(const HomeState.loading());
     try {
-      _totalCompaniesCount =
-          (await _firestore.collection('companies').get()).size;
-
       Query query = _firestore
           .collection('companies')
-          .orderBy('isFeatured', descending: true)
-          .limit(12);
+          .orderBy('isFeatured', descending: true);
+
+      _totalCompaniesCount =
+          (await _firestore.collection('companies').count().get()).count!;
+
+      List<QuerySnapshot> snapshots = [];
 
       if (searchQuery?.isNotEmpty == true) {
-        query = query.where('serviceType', isEqualTo: searchQuery);
+        final queryName = query.where('name', isEqualTo: searchQuery);
+        final queryServiceType =
+            query.where('serviceType', isEqualTo: searchQuery);
+
+        final snapshotName = await queryName.get();
+        final snapshotServiceType = await queryServiceType.get();
+
+        snapshots.addAll([snapshotName, snapshotServiceType]);
+      } else {
+        final snapshot = await query.limit(12).get();
+        snapshots.add(snapshot);
       }
 
-      final companiesSnapshot = await query.get();
-      final companies = companiesSnapshot.docs
+      // Combine results and deduplicate
+      final allDocs = snapshots.expand((snapshot) => snapshot.docs).toList();
+      final uniqueDocs = _deduplicateDocuments(allDocs);
+
+      // Set the last visible document for pagination
+      if (uniqueDocs.isNotEmpty) {
+        _lastVisibleDocument = uniqueDocs.last;
+      }
+
+      final companies = uniqueDocs
+          .take(12)
           .map((doc) =>
               CompanyModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
 
       _paginationStack.clear();
-      if (companiesSnapshot.docs.isNotEmpty) {
-        _paginationStack.add(companiesSnapshot.docs);
-      }
-
+      _paginationStack.add(uniqueDocs.take(12).toList());
       _currentPageIndex = 0;
+
       final totalPages = (_totalCompaniesCount / 12).ceil();
 
       final ads = (await _firestore.collection('ads').get())
@@ -64,7 +91,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         companies: companies,
         ads: ads,
         totalCompaniesCount: _totalCompaniesCount,
-        canLoadMore: companies.length == 12,
+        canLoadMore: (_currentPageIndex + 1) * 12 < _totalCompaniesCount,
         canLoadPrevious: false,
         currentPage: _currentPageIndex + 1,
         totalPages: totalPages,
@@ -72,6 +99,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(HomeState.error(e.toString()));
     }
+  }
+
+  List<DocumentSnapshot> _deduplicateDocuments(List<DocumentSnapshot> docs) {
+    final uniqueIds = <String>{};
+    return docs.where((doc) => uniqueIds.add(doc.id)).toList();
   }
 
   Future<void> _onFetchCompanies(
@@ -85,7 +117,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SearchCompanies event,
     Emitter<HomeState> emit,
   ) async {
-    await _fetchCompanies(emit: emit, searchQuery: event.query);
+    // Emit loading state to ensure UI reflects the current action
+    emit(const HomeState.loading());
+
+    if (event.query.isEmpty) {
+      // Clear pagination and reset everything when the search query is empty
+      _paginationStack.clear();
+      _lastVisibleDocument = null;
+      _currentPageIndex = 0;
+
+      // Re-fetch the default company list without search filters
+      await _fetchCompanies(emit: emit);
+    } else {
+      // If there's a search query, perform search
+      await _fetchCompanies(emit: emit, searchQuery: event.query);
+    }
   }
 
   Future<void> _onLoadMoreCompanies(
@@ -101,9 +147,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       List<CompanyModel> companies;
       int newPageIndex = _currentPageIndex + 1;
 
-      // Check if the next page is already cached in the stack
       if (newPageIndex < _paginationStack.length) {
-        // Use the existing page from the stack
         final companiesSnapshot = _paginationStack[newPageIndex];
         companies = companiesSnapshot
             .map((doc) =>
@@ -111,29 +155,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             .toList();
         _currentPageIndex = newPageIndex;
       } else {
-        // Fetch the next page from Firestore
         Query query = _firestore
             .collection('companies')
             .orderBy('isFeatured', descending: true)
             .limit(12);
 
-        if (_paginationStack.isNotEmpty) {
-          query = query.startAfterDocument(_paginationStack.last.last);
+        if (_lastVisibleDocument != null) {
+          query = query.startAfterDocument(_lastVisibleDocument!);
         }
 
         final companiesSnapshot = await query.get();
-        companies = companiesSnapshot.docs
+        final docs = companiesSnapshot.docs;
+
+        if (docs.isNotEmpty) {
+          _paginationStack.add(docs);
+          _lastVisibleDocument = docs.last;
+          _currentPageIndex = newPageIndex;
+        }
+
+        companies = docs
             .map((doc) =>
                 CompanyModel.fromJson(doc.data() as Map<String, dynamic>))
             .toList();
-
-        if (companiesSnapshot.docs.isNotEmpty) {
-          _paginationStack.add(companiesSnapshot.docs);
-          _currentPageIndex = _paginationStack.length - 1;
-        } else {
-          // No more pages available
-          _currentPageIndex = newPageIndex;
-        }
       }
 
       final totalPages = (_totalCompaniesCount / 12).ceil();
@@ -141,7 +184,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(currentState.copyWith(
         companies: companies,
         isLoadingMore: false,
-        canLoadMore: companies.length == 12,
+        canLoadMore: (_currentPageIndex + 1) * 12 < _totalCompaniesCount,
         canLoadPrevious: _currentPageIndex > 0,
         currentPage: _currentPageIndex + 1,
         totalPages: totalPages,
@@ -162,7 +205,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     try {
       _currentPageIndex--;
-      final totalPages = (_totalCompaniesCount / 12).ceil();
       final companiesSnapshot = _paginationStack[_currentPageIndex];
 
       final companies = companiesSnapshot
@@ -170,10 +212,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               CompanyModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
 
+      final totalPages = (_totalCompaniesCount / 12).ceil();
+
       emit(currentState.copyWith(
         companies: companies,
         isLoadingMore: false,
-        canLoadMore: true,
+        canLoadMore: (_currentPageIndex + 1) * 12 < _totalCompaniesCount,
         canLoadPrevious: _currentPageIndex > 0,
         currentPage: _currentPageIndex + 1,
         totalPages: totalPages,

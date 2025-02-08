@@ -22,6 +22,7 @@ mixin _$HomeEvent {
     required TResult Function(String query) search,
     required TResult Function() loadMore,
     required TResult Function() loadPrevious,
+    required TResult Function() reset,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -30,6 +31,7 @@ mixin _$HomeEvent {
     TResult? Function(String query)? search,
     TResult? Function()? loadMore,
     TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -38,6 +40,7 @@ mixin _$HomeEvent {
     TResult Function(String query)? search,
     TResult Function()? loadMore,
     TResult Function()? loadPrevious,
+    TResult Function()? reset,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -47,6 +50,7 @@ mixin _$HomeEvent {
     required TResult Function(SearchCompanies value) search,
     required TResult Function(LoadMoreCompanies value) loadMore,
     required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -55,6 +59,7 @@ mixin _$HomeEvent {
     TResult? Function(SearchCompanies value)? search,
     TResult? Function(LoadMoreCompanies value)? loadMore,
     TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -63,6 +68,7 @@ mixin _$HomeEvent {
     TResult Function(SearchCompanies value)? search,
     TResult Function(LoadMoreCompanies value)? loadMore,
     TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -162,6 +168,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     required TResult Function(String query) search,
     required TResult Function() loadMore,
     required TResult Function() loadPrevious,
+    required TResult Function() reset,
   }) {
     return fetch(searchQuery);
   }
@@ -173,6 +180,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     TResult? Function(String query)? search,
     TResult? Function()? loadMore,
     TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
   }) {
     return fetch?.call(searchQuery);
   }
@@ -184,6 +192,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     TResult Function(String query)? search,
     TResult Function()? loadMore,
     TResult Function()? loadPrevious,
+    TResult Function()? reset,
     required TResult orElse(),
   }) {
     if (fetch != null) {
@@ -199,6 +208,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     required TResult Function(SearchCompanies value) search,
     required TResult Function(LoadMoreCompanies value) loadMore,
     required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
   }) {
     return fetch(this);
   }
@@ -210,6 +220,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     TResult? Function(SearchCompanies value)? search,
     TResult? Function(LoadMoreCompanies value)? loadMore,
     TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
   }) {
     return fetch?.call(this);
   }
@@ -221,6 +232,7 @@ class _$FetchCompaniesImpl implements FetchCompanies {
     TResult Function(SearchCompanies value)? search,
     TResult Function(LoadMoreCompanies value)? loadMore,
     TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
     required TResult orElse(),
   }) {
     if (fetch != null) {
@@ -316,6 +328,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     required TResult Function(String query) search,
     required TResult Function() loadMore,
     required TResult Function() loadPrevious,
+    required TResult Function() reset,
   }) {
     return search(query);
   }
@@ -327,6 +340,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     TResult? Function(String query)? search,
     TResult? Function()? loadMore,
     TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
   }) {
     return search?.call(query);
   }
@@ -338,6 +352,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     TResult Function(String query)? search,
     TResult Function()? loadMore,
     TResult Function()? loadPrevious,
+    TResult Function()? reset,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -353,6 +368,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     required TResult Function(SearchCompanies value) search,
     required TResult Function(LoadMoreCompanies value) loadMore,
     required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
   }) {
     return search(this);
   }
@@ -364,6 +380,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     TResult? Function(SearchCompanies value)? search,
     TResult? Function(LoadMoreCompanies value)? loadMore,
     TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
   }) {
     return search?.call(this);
   }
@@ -375,6 +392,7 @@ class _$SearchCompaniesImpl implements SearchCompanies {
     TResult Function(SearchCompanies value)? search,
     TResult Function(LoadMoreCompanies value)? loadMore,
     TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -441,6 +459,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     required TResult Function(String query) search,
     required TResult Function() loadMore,
     required TResult Function() loadPrevious,
+    required TResult Function() reset,
   }) {
     return loadMore();
   }
@@ -452,6 +471,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     TResult? Function(String query)? search,
     TResult? Function()? loadMore,
     TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
   }) {
     return loadMore?.call();
   }
@@ -463,6 +483,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     TResult Function(String query)? search,
     TResult Function()? loadMore,
     TResult Function()? loadPrevious,
+    TResult Function()? reset,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -478,6 +499,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     required TResult Function(SearchCompanies value) search,
     required TResult Function(LoadMoreCompanies value) loadMore,
     required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
   }) {
     return loadMore(this);
   }
@@ -489,6 +511,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     TResult? Function(SearchCompanies value)? search,
     TResult? Function(LoadMoreCompanies value)? loadMore,
     TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
   }) {
     return loadMore?.call(this);
   }
@@ -500,6 +523,7 @@ class _$LoadMoreCompaniesImpl implements LoadMoreCompanies {
     TResult Function(SearchCompanies value)? search,
     TResult Function(LoadMoreCompanies value)? loadMore,
     TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -560,6 +584,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     required TResult Function(String query) search,
     required TResult Function() loadMore,
     required TResult Function() loadPrevious,
+    required TResult Function() reset,
   }) {
     return loadPrevious();
   }
@@ -571,6 +596,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     TResult? Function(String query)? search,
     TResult? Function()? loadMore,
     TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
   }) {
     return loadPrevious?.call();
   }
@@ -582,6 +608,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     TResult Function(String query)? search,
     TResult Function()? loadMore,
     TResult Function()? loadPrevious,
+    TResult Function()? reset,
     required TResult orElse(),
   }) {
     if (loadPrevious != null) {
@@ -597,6 +624,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     required TResult Function(SearchCompanies value) search,
     required TResult Function(LoadMoreCompanies value) loadMore,
     required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
   }) {
     return loadPrevious(this);
   }
@@ -608,6 +636,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     TResult? Function(SearchCompanies value)? search,
     TResult? Function(LoadMoreCompanies value)? loadMore,
     TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
   }) {
     return loadPrevious?.call(this);
   }
@@ -619,6 +648,7 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
     TResult Function(SearchCompanies value)? search,
     TResult Function(LoadMoreCompanies value)? loadMore,
     TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
     required TResult orElse(),
   }) {
     if (loadPrevious != null) {
@@ -630,6 +660,129 @@ class _$LoadPreviousCompaniesImpl implements LoadPreviousCompanies {
 
 abstract class LoadPreviousCompanies implements HomeEvent {
   const factory LoadPreviousCompanies() = _$LoadPreviousCompaniesImpl;
+}
+
+/// @nodoc
+abstract class _$$ResetImplCopyWith<$Res> {
+  factory _$$ResetImplCopyWith(
+          _$ResetImpl value, $Res Function(_$ResetImpl) then) =
+      __$$ResetImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ResetImplCopyWithImpl<$Res>
+    extends _$HomeEventCopyWithImpl<$Res, _$ResetImpl>
+    implements _$$ResetImplCopyWith<$Res> {
+  __$$ResetImplCopyWithImpl(
+      _$ResetImpl _value, $Res Function(_$ResetImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of HomeEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$ResetImpl implements Reset {
+  const _$ResetImpl();
+
+  @override
+  String toString() {
+    return 'HomeEvent.reset()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ResetImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? searchQuery) fetch,
+    required TResult Function(String query) search,
+    required TResult Function() loadMore,
+    required TResult Function() loadPrevious,
+    required TResult Function() reset,
+  }) {
+    return reset();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? searchQuery)? fetch,
+    TResult? Function(String query)? search,
+    TResult? Function()? loadMore,
+    TResult? Function()? loadPrevious,
+    TResult? Function()? reset,
+  }) {
+    return reset?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? searchQuery)? fetch,
+    TResult Function(String query)? search,
+    TResult Function()? loadMore,
+    TResult Function()? loadPrevious,
+    TResult Function()? reset,
+    required TResult orElse(),
+  }) {
+    if (reset != null) {
+      return reset();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(FetchCompanies value) fetch,
+    required TResult Function(SearchCompanies value) search,
+    required TResult Function(LoadMoreCompanies value) loadMore,
+    required TResult Function(LoadPreviousCompanies value) loadPrevious,
+    required TResult Function(Reset value) reset,
+  }) {
+    return reset(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(FetchCompanies value)? fetch,
+    TResult? Function(SearchCompanies value)? search,
+    TResult? Function(LoadMoreCompanies value)? loadMore,
+    TResult? Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult? Function(Reset value)? reset,
+  }) {
+    return reset?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(FetchCompanies value)? fetch,
+    TResult Function(SearchCompanies value)? search,
+    TResult Function(LoadMoreCompanies value)? loadMore,
+    TResult Function(LoadPreviousCompanies value)? loadPrevious,
+    TResult Function(Reset value)? reset,
+    required TResult orElse(),
+  }) {
+    if (reset != null) {
+      return reset(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class Reset implements HomeEvent {
+  const factory Reset() = _$ResetImpl;
 }
 
 /// @nodoc
