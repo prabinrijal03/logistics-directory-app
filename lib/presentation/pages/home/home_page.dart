@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
                 onChanged: (query) {
                   if (query.trim().isEmpty) {
                     // Reset the state when the search query is cleared
-                    context.read<HomeBloc>().add(const HomeEvent.fetch());
+                    context.read<HomeBloc>().add(const HomeEvent.reset());
                   } else {
                     context.read<HomeBloc>().add(HomeEvent.search(query));
                   }
